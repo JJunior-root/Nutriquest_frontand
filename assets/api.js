@@ -4,6 +4,7 @@
    ============================================================ */
 
 const API_BASE = 'https://nutriquest-completo.onrender.com/api';
+const TOKEN_KEY = 'nq_token';
 const USER_KEY  = 'nq_user';
 
 const NQ = {
@@ -55,6 +56,13 @@ const NQ = {
     this.setToken(data.token);
     this.setUser(data.user);
     return data;
+  },
+
+  async forgotPassword(email) {
+    return this.req('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
   },
 
   logout() {

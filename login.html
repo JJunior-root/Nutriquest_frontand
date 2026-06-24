@@ -261,6 +261,7 @@ body{
   transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;
 }
 .social-btn:hover{border-color:var(--text-muted);color:var(--text);background:var(--bg-card-hover)}
+.social-btn.disabled{opacity:0.6;cursor:not-allowed;border-color:#444;color:#777;background:var(--bg)}
 .social-btn .sicon{font-size:14px}
 
 /* ===================== BOTTOM TEXT ===================== */
@@ -335,9 +336,39 @@ body{
 }
 
 /* ===================== RESPONSIVE ===================== */
-@media(max-width:480px){
-  .login-card{padding:24px 18px}
-  .logo-title{font-size:13px}
+@media (max-width:720px) {
+  .page-wrap { padding: 28px 16px; }
+  .login-card { padding: 30px 24px; }
+  .tabs { flex-wrap: wrap; gap: 8px; }
+  .tab-btn { font-size: 9px; padding: 12px 0; }
+  .field-input { font-size: 15px; padding: 14px 16px; }
+  .btn-submit { font-size: 11px; padding: 15px; }
+  .forgot-link, .bottom-text, .login-footer { font-size: 8px; }
+  .logo-title { font-size: clamp(14px, 3vw, 18px); }
+  .grid-bg { background-size: 32px 32px; }
+}
+
+@media (max-width:520px) {
+  body { min-height: auto; }
+  .page-wrap { padding: 22px 14px; }
+  .login-card { padding: 24px 18px; border-radius: 14px; }
+  .logo-icon { font-size: 40px; }
+  .field-label { font-size: 7px; }
+  .field-input { font-size: 14px; }
+  .btn-submit { font-size: 10px; padding: 14px; }
+  .social-row { flex-direction: column; }
+  .social-btn { padding: 12px; font-size: 9px; }
+  .bottom-text, .login-footer { font-size: 7px; }
+}
+
+@media (max-width:380px) {
+  .page-wrap { padding: 18px 12px; }
+  .field-input { padding: 12px 12px; }
+  .tab-btn { font-size: 8px; }
+  .forgot-link { font-size: 7px; }
+  .success-title { font-size: 16px; }
+  .success-sub { font-size: 12px; }
+  .success-xp { font-size: 20px; }
 }
 </style>
 </head>
@@ -384,12 +415,8 @@ body{
         </div>
         <div class="error-msg" id="login-pass-err">Senha incorreta</div>
       </div>
-      <a href="#" class="forgot-link">ESQUECI A SENHA →</a>
+      <a href="#" class="forgot-link" onclick="handleForgotPassword(); return false">ESQUECI A SENHA →</a>
       <button class="btn-submit" onclick="handleLogin()"><span>▶ INICIAR SESSÃO</span></button>
-      <div class="or-divider"><span>— OU —</span></div>
-      <div class="social-row">
-        <button class="social-btn" onclick="socialLogin('Google')"><span class="sicon">🌐</span> Google</button>
-      </div>
       <div class="bottom-text">SEM CONTA? <a href="#" onclick="switchTab('register');return false">CADASTRE-SE AQUI</a></div>
     </div>
 
@@ -506,7 +533,9 @@ function showError(inputId, msgId, msg) {
   if (msg) el.textContent = msg;
   el.classList.add('visible');
 }
-function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+function isValidEmail(e) {
+  return /^[^\s@]+@(gmail\.com|googlemail\.com)$/i.test(e);
+}
 
 /* ============ LOGIN ============ */
 async function handleLogin() {
@@ -514,7 +543,7 @@ async function handleLogin() {
   const email = document.getElementById('login-email').value.trim();
   const pass  = document.getElementById('login-pass').value;
   let ok = true;
-  if (!isValidEmail(email)) { showError('login-email','login-email-err','E-mail inválido'); ok = false; }
+  if (!isValidEmail(email)) { showError('login-email','login-email-err','Use um e-mail @gmail.com válido'); ok = false; }
   if (pass.length < 1)      { showError('login-pass','login-pass-err','Informe a senha'); ok = false; }
   if (!ok) return;
 
@@ -526,11 +555,34 @@ async function handleLogin() {
     const data = await NQ.login(email, pass);
     const bonus = data.dailyBonus ? `+${data.dailyBonus} XP` : '+0 XP';
     showSuccess('🏆', 'LOGIN EFETUADO!', `Bem-vindo de volta, ${data.user.username}!`, bonus, 'BÔNUS DE ACESSO DIÁRIO');
-    setTimeout(() => { window.location.href = '/'; }, 1800);
+    setTimeout(() => { window.location.href = '/'; }, 5);
   } catch (err) {
     showError('login-pass', 'login-pass-err', err.message);
     btn.disabled = false;
     btn.querySelector('span').textContent = '▶ INICIAR SESSÃO';
+  }
+}
+
+async function handleForgotPassword() {
+  clearErrors();
+  const email = document.getElementById('login-email').value.trim();
+  if (!isValidEmail(email)) {
+    showError('login-email', 'login-email-err', 'Use um e-mail @gmail.com válido para recuperar a senha');
+    return;
+  }
+
+  const link = document.querySelector('.forgot-link');
+  link.textContent = 'ENVIANDO...';
+  link.classList.add('disabled');
+
+  try {
+    await NQ.forgotPassword(email);
+    showSuccess('✉️', 'VERIFIQUE SEU GMAIL', `Enviamos um link para ${email}.`, '+0 XP', 'RECUPERAÇÃO DE SENHA');
+  } catch (err) {
+    showError('login-email', 'login-email-err', err.message || 'Erro ao enviar link');
+  } finally {
+    link.textContent = 'ESQUECI A SENHA →';
+    link.classList.remove('disabled');
   }
 }
 
@@ -543,7 +595,7 @@ async function handleRegister() {
   const pass2 = document.getElementById('reg-pass2').value;
   let ok = true;
   if (name.length < 3)      { showError('reg-name','reg-name-err','Nome muito curto (mín. 3 chars)'); ok = false; }
-  if (!isValidEmail(email)) { showError('reg-email','reg-email-err','E-mail inválido'); ok = false; }
+  if (!isValidEmail(email)) { showError('reg-email','reg-email-err','Use um e-mail @gmail.com válido'); ok = false; }
   if (pass.length < 6)      { showError('reg-pass','reg-pass-err','Senha muito fraca'); ok = false; }
   if (pass !== pass2)       { showError('reg-pass2','reg-pass2-err','Senhas não conferem'); ok = false; }
   if (!ok) return;
