@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Minha Lista de Alimentos — NutriQuest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--hp:#ff4757;--hp-glow:#ff6b81;--xp:#2ed573;--xp-glow:#7bed9f;--power:#3742fa;--power-glow:#5352ed;--bg:#0a0a0f;--bg2:#12121a;--bg-card:#1a1a2e;--bg-card-hover:#222240;--border:#2a2a4a;--text:#e8e8f0;--text-muted:#8888a0;--gold:#ffa502;--cyan:#00d2d3}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.font-pixel{font-family:'Press Start 2P',monospace}
+.container{max-width:960px;margin:0 auto;padding:40px 20px}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(16px,3vw,28px);margin-bottom:8px}
+.back-link{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;display:inline-block;margin-bottom:20px}
+.back-link:hover{color:var(--text)}
+.text-hp{color:var(--hp)}.text-power{color:var(--power)}.text-xp{color:var(--xp)}.text-gold{color:var(--gold)}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+input,select,textarea,button{font-family:inherit}
+
+/* ── top bar ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px}
+.user-badge{display:flex;align-items:center;gap:10px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:8px 14px}
+.user-badge .name{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--xp)}
+.user-badge .xp{font-size:11px;color:var(--gold)}
+.btn-logout{background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);cursor:pointer;padding:6px 12px;font-size:11px;transition:all .2s}
+.btn-logout:hover{border-color:var(--hp);color:var(--hp)}
+
+/* ── search + filters ── */
+.search-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.search-bar input{flex:1;min-width:200px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none}
+.search-bar input:focus{border-color:var(--power)}
+.search-bar select{padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;outline:none;cursor:pointer}
+
+/* ── btn ── */
+.btn{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);cursor:pointer;font-family:'Press Start 2P',monospace;font-size:9px;transition:all .2s}
+.btn:hover{border-color:var(--power);background:var(--bg-card-hover)}
+.btn-primary{border-color:var(--xp);color:var(--xp)}
+.btn-primary:hover{background:rgba(46,213,115,.1);box-shadow:0 0 12px rgba(46,213,115,.2)}
+.btn-danger{border-color:var(--hp);color:var(--hp)}
+.btn-danger:hover{background:rgba(255,71,87,.1)}
+
+/* ── modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,10,15,.85);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:32px;width:100%;max-width:520px;position:relative}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--xp),var(--cyan));border-radius:12px 12px 0 0}
+.modal h2{font-family:'Press Start 2P',monospace;font-size:12px;margin-bottom:24px;color:var(--xp)}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:20px}
+.modal-close:hover{color:var(--text)}
+.field{margin-bottom:16px}
+.field label{display:block;font-family:'Press Start 2P',monospace;font-size:8px;color:var(--text-muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;outline:none;transition:border .2s}
+.field input:focus,.field select:focus{border-color:var(--power)}
+.field textarea{resize:vertical;min-height:60px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+/* ── food cards ── */
+.foods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.food-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:20px;transition:border-color .2s;position:relative}
+.food-card:hover{border-color:var(--text-muted)}
+.food-card .cat{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--power);margin-bottom:6px}
+.food-card .fname{font-size:16px;font-weight:700;margin-bottom:12px}
+.food-card .macros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.macro-pill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.macro-pill.cal{background:rgba(255,71,87,.12);color:var(--hp);border:1px solid rgba(255,71,87,.25)}
+.macro-pill.prot{background:rgba(46,213,115,.12);color:var(--xp);border:1px solid rgba(46,213,115,.25)}
+.macro-pill.carb{background:rgba(255,165,2,.12);color:var(--gold);border:1px solid rgba(255,165,2,.25)}
+.macro-pill.fat{background:rgba(162,155,254,.12);color:#a29bfe;border:1px solid rgba(162,155,254,.25)}
+.food-card .serving{font-size:11px;color:var(--text-muted);margin-bottom:14px}
+.food-card .notes{font-size:12px;color:var(--text-muted);font-style:italic;margin-bottom:12px}
+.food-card .actions{display:flex;gap:8px}
+.food-card .actions button{flex:1;padding:7px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);cursor:pointer;font-size:11px;transition:all .2s}
+.food-card .actions button:hover{border-color:var(--power);color:var(--text)}
+.food-card .actions .del:hover{border-color:var(--hp);color:var(--hp)}
+
+/* ── empty / loading ── */
+.empty{text-align:center;padding:60px 20px;color:var(--text-muted)}
+.empty .icon{font-size:48px;margin-bottom:16px}
+.empty p{font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.8}
+.loading{text-align:center;padding:40px;color:var(--text-muted);font-family:'Press Start 2P',monospace;font-size:10px}
+
+/* ── toast ── */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--bg-card);border:1px solid var(--xp);border-radius:8px;padding:12px 18px;font-family:'Press Start 2P',monospace;font-size:9px;color:var(--xp);z-index:200;transform:translateY(80px);opacity:0;transition:all .3s}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.error{border-color:var(--hp);color:var(--hp)}
+
+/* ── stats bar ── */
+.stats-bar{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.stat-box{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px 18px;flex:1;min-width:120px;text-align:center}
+.stat-box .val{font-family:'Press Start 2P',monospace;font-size:18px;color:var(--xp);display:block}
+.stat-box .lbl{font-size:11px;color:var(--text-muted);margin-top:4px}
+
+/* ── responsive ── */
+@media(max-width:768px){
+  .container{padding:20px 14px}
+  .topbar{flex-direction:column;align-items:flex-start}
+  .topbar>div:last-child{width:100%;justify-content:space-between}
+  .search-bar{flex-direction:column}
+  .search-bar input,.search-bar select{width:100%;min-width:unset}
+  .foods-grid{grid-template-columns:1fr}
+  .field-row,.field-row3{grid-template-columns:1fr 1fr}
+  .modal{padding:20px}
+}
+@media(max-width:480px){
+  h1{font-size:14px}
+  .field-row,.field-row3{grid-template-columns:1fr}
+  .modal-actions{flex-direction:column}
+  .modal-actions .btn{width:100%;text-align:center}
+  .stat-box .val{font-size:14px}
+  .stats-bar{gap:8px}
+  .toast{right:12px;left:12px;bottom:16px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back-link">← VOLTAR</a>
+
+  <div class="topbar">
+    <div>
+      <h1><span class="text-xp">MINHA</span> <span class="text-power">LISTA</span></h1>
+      <p style="color:var(--text-muted);font-size:13px">Seus alimentos personalizados. Cada novo cria +10 XP!</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="user-badge" id="userBadge" style="display:none">
+        <div>
+          <div class="name" id="badgeName">—</div>
+          <div class="xp" id="badgeXp"></div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="NQ.logout()">SAIR</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar" style="display:none">
+    <div class="stat-box"><span class="val" id="statTotal">0</span><div class="lbl">Alimentos</div></div>
+    <div class="stat-box"><span class="val" id="statXP">0</span><div class="lbl">XP Total</div></div>
+    <div class="stat-box"><span class="val" id="statLevel">1</span><div class="lbl">Nível</div></div>
+  </div>
+
+  <!-- Search + Add -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="🔎 Buscar na minha lista..." oninput="debounceSearch()" />
+    <select id="catFilter" onchange="loadFoods()">
+      <option value="">Todas categorias</option>
+    </select>
+    <button class="btn btn-primary" onclick="openModal()">+ NOVO ALIMENTO</button>
+  </div>
+
+  <!-- Food list -->
+  <div id="foodsContainer"><div class="loading">CARREGANDO...</div></div>
+</div>
+
+<!-- Modal criar/editar -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <h2 id="modalTitle">✦ NOVO ALIMENTO</h2>
+
+    <input type="hidden" id="editId" />
+
+    <div class="field-row">
+      <div class="field" style="grid-column:1/-1">
+        <label>NOME DO ALIMENTO *</label>
+        <input type="text" id="fName" placeholder="Ex: Frango grelhado" />
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>CATEGORIA</label>
+        <input type="text" id="fCat" placeholder="Ex: Proteínas" value="Geral" />
+      </div>
+      <div class="field">
+        <label>PORÇÃO</label>
+        <input type="number" id="fServing" value="100" min="1" />
+      </div>
+      <div class="field">
+        <label>UNIDADE</label>
+        <select id="fUnit">
+          <option value="g">g</option>
+          <option value="ml">ml</option>
+          <option value="un">unidade</option>
+          <option value="col">colher</option>
+          <option value="xic">xícara</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row" style="grid-template-columns:1fr 1fr">
+      <div class="field">
+        <label>🔥 CALORIAS (kcal) *</label>
+        <input type="number" id="fCal" placeholder="0" min="0" step="0.1" />
+      </div>
+      <div class="field">
+        <label>🧱 PROTEÍNA (g)</label>
+        <input type="number" id="fProt" placeholder="0" min="0" step="0.1" />
+      </div>
+    </div>
+    <div class="field-row" style="grid-template-columns:1fr 1fr 1fr">
+      <div class="field">
+        <label>⚡ CARBOIDRATO (g)</label>
+        <input type="number" id="fCarb" placeholder="0" min="0" step="0.1" />
+      </div>
+      <div class="field">
+        <label>🧈 GORDURA (g)</label>
+        <input type="number" id="fFat" placeholder="0" min="0" step="0.1" />
+      </div>
+      <div class="field">
+        <label>🌾 FIBRA (g)</label>
+        <input type="number" id="fFiber" placeholder="0" min="0" step="0.1" />
+      </div>
+    </div>
+
+    <div class="field">
+      <label>OBSERVAÇÕES</label>
+      <textarea id="fNotes" placeholder="Ex: Sem pele, cozido..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModalDirect()">CANCELAR</button>
+      <button class="btn btn-primary" id="saveBtn" onclick="saveFood()">✦ SALVAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="/assets/api.js"></script>
+<script>
+/* ── Auth guard ─────────────────────────────────────────── */
+if (!NQ.isLoggedIn()) window.location.href = '/login.html';
+
+let searchTimer;
+function debounceSearch() {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(loadFoods, 350);
+}
+
+/* ── Load ───────────────────────────────────────────────── */
+async function loadFoods() {
+  const q   = document.getElementById('searchInput').value;
+  const cat = document.getElementById('catFilter').value;
+  try {
+    const data = await NQ.getFoods(q, cat);
+    renderFoods(data.foods);
+    updateStats();
+    await loadCategories();
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+async function loadCategories() {
+  try {
+    const data = await fetch('http://localhost:3001/api/foods/meta/categories', {
+      headers: NQ.headers()
+    }).then(r => r.json());
+    // rebuild select keeping current value
+    const sel = document.getElementById('catFilter');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">Todas categorias</option>';
+    (data.categories || []).forEach(c => {
+      const o = document.createElement('option');
+      o.value = c; o.textContent = c;
+      if (c === cur) o.selected = true;
+      sel.appendChild(o);
+    });
+  } catch {}
+}
+
+async function updateStats() {
+  const u = NQ.getUser();
+  if (u) {
+    document.getElementById('badgeName').textContent = u.username;
+    document.getElementById('userBadge').style.display = 'flex';
+  }
+  try {
+    const [stats, foods] = await Promise.all([NQ.getStats(), NQ.getFoods()]);
+    document.getElementById('statsBar').style.display = 'flex';
+    document.getElementById('statTotal').textContent = foods.total;
+    document.getElementById('statXP').textContent    = stats.xp;
+    document.getElementById('statLevel').textContent = stats.level;
+    document.getElementById('badgeXp').textContent   = `⭐ ${stats.xp} XP · Nível ${stats.level}`;
+  } catch {}
+}
+
+/* ── Render ─────────────────────────────────────────────── */
+function renderFoods(foods) {
+  const el = document.getElementById('foodsContainer');
+  if (!foods.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="icon">🍽</div>
+      <p>NENHUM ALIMENTO AINDA<br><br>CLIQUE EM "+ NOVO ALIMENTO"<br>PARA COMEÇAR!</p>
+    </div>`;
+    return;
+  }
+  el.innerHTML = `<div class="foods-grid">${foods.map(foodCard).join('')}</div>`;
+}
+
+function foodCard(f) {
+  const n = f.nutrients;
+  return `<div class="food-card">
+    <div class="cat">${esc(f.category)}</div>
+    <div class="fname">${esc(f.name)}</div>
+    <div class="macros">
+      <span class="macro-pill cal">🔥 ${n.calories} kcal</span>
+      ${n.protein  ? `<span class="macro-pill prot">🧱 ${n.protein}g P</span>` : ''}
+      ${n.carbs    ? `<span class="macro-pill carb">⚡ ${n.carbs}g C</span>` : ''}
+      ${n.fat      ? `<span class="macro-pill fat">🧈 ${n.fat}g G</span>` : ''}
+    </div>
+    <div class="serving">Por ${f.servingSize}${f.servingUnit}</div>
+    ${f.notes ? `<div class="notes">${esc(f.notes)}</div>` : ''}
+    <div class="actions">
+      <button onclick="editFood(${JSON.stringify(f).split('"').join('&quot;')})">✏ EDITAR</button>
+      <button class="del" onclick="deleteFood('${f.id}')">🗑 REMOVER</button>
+    </div>
+  </div>`;
+}
+
+function esc(t) {
+  const d = document.createElement('div');
+  d.textContent = t || '';
+  return d.innerHTML;
+}
+
+/* ── Modal ──────────────────────────────────────────────── */
+function openModal(food) {
+  document.getElementById('editId').value    = food ? food.id : '';
+  document.getElementById('modalTitle').textContent = food ? '✏ EDITAR ALIMENTO' : '✦ NOVO ALIMENTO';
+  document.getElementById('fName').value    = food ? food.name : '';
+  document.getElementById('fCat').value     = food ? food.category : 'Geral';
+  document.getElementById('fServing').value = food ? food.servingSize : 100;
+  document.getElementById('fUnit').value    = food ? food.servingUnit : 'g';
+  document.getElementById('fCal').value     = food ? food.nutrients.calories : '';
+  document.getElementById('fProt').value    = food ? food.nutrients.protein : '';
+  document.getElementById('fCarb').value    = food ? food.nutrients.carbs : '';
+  document.getElementById('fFat').value     = food ? food.nutrients.fat : '';
+  document.getElementById('fFiber').value   = food ? food.nutrients.fiber : '';
+  document.getElementById('fNotes').value   = food ? food.notes : '';
+  document.getElementById('modalOverlay').classList.add('open');
+  setTimeout(() => document.getElementById('fName').focus(), 100);
+}
+
+function editFood(f) { openModal(f); }
+
+function closeModal(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+/* ── Save ───────────────────────────────────────────────── */
+async function saveFood() {
+  const id   = document.getElementById('editId').value;
+  const name = document.getElementById('fName').value.trim();
+  const cal  = document.getElementById('fCal').value;
+
+  if (!name)      { alert('Informe o nome do alimento'); return; }
+  if (cal === '') { alert('Informe as calorias'); return; }
+
+  const body = {
+    name,
+    category:    document.getElementById('fCat').value || 'Geral',
+    servingSize: parseFloat(document.getElementById('fServing').value) || 100,
+    servingUnit: document.getElementById('fUnit').value,
+    calories:    parseFloat(cal)    || 0,
+    protein:     parseFloat(document.getElementById('fProt').value)  || 0,
+    carbs:       parseFloat(document.getElementById('fCarb').value)  || 0,
+    fat:         parseFloat(document.getElementById('fFat').value)   || 0,
+    fiber:       parseFloat(document.getElementById('fFiber').value) || 0,
+    notes:       document.getElementById('fNotes').value,
+  };
+
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'SALVANDO...';
+
+  try {
+    if (id) {
+      await NQ.updateFood(id, body);
+      showToast('✔ Alimento atualizado!');
+    } else {
+      await NQ.createFood(body);
+      showToast('⭐ Alimento criado! +10 XP');
+    }
+    closeModalDirect();
+    loadFoods();
+  } catch (err) {
+    showToast(err.message, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ SALVAR';
+  }
+}
+
+/* ── Delete ─────────────────────────────────────────────── */
+async function deleteFood(id) {
+  if (!confirm('Remover este alimento?')) return;
+  try {
+    await NQ.deleteFood(id);
+    showToast('Alimento removido.');
+    loadFoods();
+  } catch (err) {
+    showToast(err.message, true);
+  }
+}
+
+/* ── Toast ──────────────────────────────────────────────── */
+let toastTimer;
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  setTimeout(() => t.classList.add('show'), 10);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── Init ───────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', loadFoods);
+</script>
+</body>
+</html>

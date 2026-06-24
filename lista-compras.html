@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lista de Compras - NutriQuest</title>
+<meta name="description" content="Lista de compras inteligente para atletas." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--hp:#ff4757;--xp:#2ed573;--power:#3742fa;--bg:#0a0a0f;--bg2:#12121a;--bg-card:#1a1a2e;--border:#2a2a4a;--text:#e8e8f0;--text-muted:#8888a0;--gold:#ffa502}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.font-pixel{font-family:'Press Start 2P',monospace}
+.container{max-width:700px;margin:0 auto;padding:40px 20px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(18px,4vw,30px);margin-bottom:8px}
+.back-link{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;display:inline-block;margin-bottom:20px}
+.back-link:hover{color:var(--text)}
+.text-hp{color:var(--hp)}.text-power{color:var(--power)}.text-xp{color:var(--xp)}
+input,button{font-family:inherit}
+.input-group{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.input-group input{flex:1;min-width:120px;padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;outline:none}
+.input-group input:focus{border-color:var(--power)}
+.input-group button{padding:10px 18px;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);cursor:pointer;font-family:'Press Start 2P',monospace;font-size:9px;transition:all 0.2s}
+.input-group button:hover{border-color:var(--power);background:var(--bg-card-hover)}
+.item-list{list-style:none;padding:0}
+.item-list li{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;background:var(--bg-card);transition:all 0.2s}
+.item-list li:hover{border-color:var(--text-muted)}
+.item-list li.done{opacity:0.5;border-color:var(--xp)}
+.item-list li.done .item-name{text-decoration:line-through}
+.item-check{width:20px;height:20px;border:2px solid var(--border);border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;transition:all 0.2s}
+.item-check.checked{background:var(--xp);border-color:var(--xp);color:#000}
+.item-name{flex:1;font-size:14px}
+.item-qty{font-size:12px;color:var(--text-muted)}
+.item-del{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;padding:4px}
+.item-del:hover{color:var(--hp)}
+.section-title{font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:12px}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+
+@media(max-width:600px){
+  .container{padding:20px 14px}
+  h1{font-size:clamp(14px,5vw,22px)}
+  .input-group{flex-direction:column}
+  .input-group input,.input-group button{width:100%}
+  #qtyInput{max-width:unset!important}
+  .item-list li{flex-wrap:wrap;gap:8px}
+  .item-name{min-width:0;word-break:break-word}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back-link">← VOLTAR</a>
+  <h1><span class="text-power">LISTA</span> <span class="text-hp">DE COMPRAS</span></h1>
+  <p style="color:var(--text-muted);margin-bottom:24px;font-size:14px">Anote seus itens, marque conforme compra. Salvo automaticamente no seu dispositivo.</p>
+
+  <div class="card" style="border-color:var(--border)">
+    <div class="input-group">
+      <input type="text" id="itemInput" placeholder="Item (ex: Frango, Aveia, Banana)" autofocus />
+      <input type="text" id="qtyInput" placeholder="Qtd (ex: 1kg, 6un)" style="max-width:140px" />
+      <button onclick="addItem()">+ ADICIONAR</button>
+    </div>
+  </div>
+
+  <div id="pendingSection">
+    <h2 class="section-title" style="color:var(--power)">A COMPRAR (<span id="pendingCount">0</span>)</h2>
+    <div id="emptyPending" style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">Nada pendente.</div>
+    <ul class="item-list" id="pendingList"></ul>
+  </div>
+
+  <div id="doneSection" style="display:none;margin-top:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2 class="section-title" style="color:var(--xp)">JÁ COMPRADOS (<span id="doneCount">0</span>)</h2>
+      <button onclick="clearDone()" style="padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);cursor:pointer;font-size:12px">Limpar comprados</button>
+    </div>
+    <ul class="item-list" id="doneList"></ul>
+  </div>
+
+  <div id="clearAllSection" style="display:none;margin-top:16px;text-align:center">
+    <button onclick="clearAll()" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text-muted);cursor:pointer;font-size:12px">Limpar lista inteira</button>
+  </div>
+
+  <a href="/alimentos.html" class="back-link" style="margin-top:24px">🔎 BUSCAR ALIMENTO</a>
+</div>
+
+
+<script src="/assets/api.js"></script>
+<script>
+/* ================================================================
+   Lista de Compras — integrada com backend NutriQuest
+   ================================================================ */
+
+let items = [];
+let offlineMode = false;
+const OFFLINE_KEY = 'nutriquest:shopping-offline';
+
+/* ── Init ───────────────────────────────────────────────────── */
+async function init() {
+  if (NQ.isLoggedIn()) {
+    try {
+      const data = await NQ.getShop();
+      items = data.items;
+      updateUserNav();
+    } catch {
+      offlineMode = true;
+      loadOffline();
+    }
+  } else {
+    offlineMode = true;
+    loadOffline();
+  }
+  render();
+
+  document.getElementById('itemInput').addEventListener('keydown', e => { if (e.key === 'Enter') addItem(); });
+  document.getElementById('qtyInput').addEventListener('keydown',  e => { if (e.key === 'Enter') addItem(); });
+}
+
+function loadOffline() {
+  try { items = JSON.parse(localStorage.getItem(OFFLINE_KEY)) || []; } catch { items = []; }
+}
+function saveOffline() {
+  localStorage.setItem(OFFLINE_KEY, JSON.stringify(items));
+}
+
+function updateUserNav() {
+  const u = NQ.getUser();
+  if (!u) return;
+  const nav = document.querySelector('.back-link');
+  if (nav) {
+    const badge = document.createElement('span');
+    badge.style.cssText = 'margin-left:16px;font-size:9px;color:var(--xp);font-family:"Press Start 2P",monospace';
+    badge.textContent = `⭐ ${u.username}`;
+    nav.parentNode.insertBefore(badge, nav.nextSibling);
+  }
+}
+
+/* ── Add ────────────────────────────────────────────────────── */
+async function addItem() {
+  const nameInput = document.getElementById('itemInput');
+  const qtyInput  = document.getElementById('qtyInput');
+  const name = nameInput.value.trim();
+  if (!name) return;
+  const qty = qtyInput.value.trim();
+
+  if (!offlineMode) {
+    try {
+      const data = await NQ.addShopItem(name, qty);
+      items.unshift(data.item);
+    } catch {
+      const item = { id: crypto.randomUUID(), name, qty, done: false, createdAt: new Date().toISOString() };
+      items.unshift(item);
+    }
+  } else {
+    const item = { id: crypto.randomUUID(), name, qty, checked: false, createdAt: new Date().toISOString() };
+    items.unshift(item);
+    saveOffline();
+  }
+
+  nameInput.value = '';
+  qtyInput.value = '';
+  render();
+  nameInput.focus();
+}
+
+/* ── Toggle ─────────────────────────────────────────────────── */
+async function toggleItem(id) {
+  if (!offlineMode) {
+    try {
+      const data = await NQ.toggleShopItem(id);
+      const idx = items.findIndex(i => i.id === id);
+      if (idx !== -1) items[idx] = data.item;
+    } catch {
+      const item = items.find(i => i.id === id);
+      if (item) item.done = !item.done;
+    }
+  } else {
+    const item = items.find(i => i.id === id);
+    if (item) { item.checked = !item.checked; saveOffline(); }
+  }
+  render();
+}
+
+/* ── Remove ─────────────────────────────────────────────────── */
+async function removeItem(id) {
+  if (!offlineMode) {
+    try { await NQ.deleteShopItem(id); } catch {}
+  }
+  items = items.filter(i => i.id !== id);
+  if (offlineMode) saveOffline();
+  render();
+}
+
+/* ── Clear done ─────────────────────────────────────────────── */
+async function clearDone() {
+  if (!offlineMode) {
+    try { await NQ.clearDoneItems(); } catch {}
+  }
+  items = items.filter(i => !(i.done || i.checked));
+  if (offlineMode) saveOffline();
+  render();
+}
+
+/* ── Clear all ──────────────────────────────────────────────── */
+async function clearAll() {
+  if (!confirm('Limpar toda a lista?')) return;
+  if (!offlineMode) {
+    try { await NQ.clearAllItems(); } catch {}
+  }
+  items = [];
+  if (offlineMode) saveOffline();
+  render();
+}
+
+/* ── Render ─────────────────────────────────────────────────── */
+function isDone(item) { return item.done || item.checked; }
+
+function render() {
+  const pending = items.filter(i => !isDone(i));
+  const done    = items.filter(i =>  isDone(i));
+
+  const pendingList  = document.getElementById('pendingList');
+  const doneList     = document.getElementById('doneList');
+  const emptyPending = document.getElementById('emptyPending');
+  const doneSection  = document.getElementById('doneSection');
+  const clearAllSect = document.getElementById('clearAllSection');
+
+  pendingList.innerHTML = '';
+  pending.forEach(i => {
+    const li = document.createElement('li');
+    li.innerHTML = `<div class="item-check" onclick="toggleItem('${i.id}')"></div>
+      <span class="item-name">${esc(i.name)}</span>
+      ${i.qty ? `<span class="item-qty">${esc(i.qty)}</span>` : ''}
+      <button class="item-del" onclick="removeItem('${i.id}')">✕</button>`;
+    pendingList.appendChild(li);
+  });
+
+  doneList.innerHTML = '';
+  done.forEach(i => {
+    const li = document.createElement('li');
+    li.className = 'done';
+    li.innerHTML = `<div class="item-check checked" onclick="toggleItem('${i.id}')">✓</div>
+      <span class="item-name">${esc(i.name)}</span>
+      ${i.qty ? `<span class="item-qty">${esc(i.qty)}</span>` : ''}
+      <button class="item-del" onclick="removeItem('${i.id}')">✕</button>`;
+    doneList.appendChild(li);
+  });
+
+  document.getElementById('pendingCount').textContent = pending.length;
+  document.getElementById('doneCount').textContent    = done.length;
+  emptyPending.style.display = pending.length ? 'none' : 'block';
+  doneSection.style.display  = done.length    ? 'block' : 'none';
+  clearAllSect.style.display = items.length   ? 'block' : 'none';
+}
+
+function esc(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

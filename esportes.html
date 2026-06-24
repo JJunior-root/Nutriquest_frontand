@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Esportes - NutriQuest</title>
+<meta name="description" content="Nutrição para diferentes modalidades esportivas: força, endurance, velocidade." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--hp:#ff4757;--xp:#2ed573;--power:#3742fa;--bg:#0a0a0f;--bg2:#12121a;--bg-card:#1a1a2e;--border:#2a2a4a;--text:#e8e8f0;--text-muted:#8888a0;--gold:#ffa502}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.font-pixel{font-family:'Press Start 2P',monospace}
+.container{max-width:800px;margin:0 auto;padding:40px 20px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-family:'Press Start 2P',monospace;font-size:11px;margin-bottom:10px}
+.card p,.card li{color:var(--text-muted);font-size:14px;line-height:1.8}
+.card ul{list-style:none;padding:0}
+.card li{padding:4px 0;padding-left:16px;position:relative}
+.card li::before{content:'▸';position:absolute;left:0;color:var(--power)}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(18px,4vw,32px);margin-bottom:8px}
+.back-link{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;display:inline-block;margin-bottom:20px}
+.back-link:hover{color:var(--text)}
+.sport-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.text-hp{color:var(--hp)}.text-xp{color:var(--xp)}.text-power{color:var(--power)}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back-link">← VOLTAR</a>
+  <h1><span class="text-hp">🏟</span> <span class="text-power">ESPORTES</span></h1>
+  <p style="color:var(--text-muted);margin-bottom:30px;font-size:14px">Estratégias nutricionais para cada tipo de modalidade esportiva.</p>
+
+  <div class="sport-grid">
+    <div class="card" style="border-color:var(--power)">
+      <div style="font-size:36px;margin-bottom:8px">🏋️</div>
+      <h2 class="text-power">FORÇA & HIPERTROFIA</h2>
+      <p><strong>Objetivo:</strong> Ganho de massa magra e força máxima.</p>
+      <p><strong>Carbo:</strong> 4–6 g/kg/dia. Priorizar em torno do treino.</p>
+      <p><strong>Proteína:</strong> 1,8–2,2 g/kg/dia. Distribuir em 4–5 refeições.</p>
+      <p><strong>Gordura:</strong> 0,8–1,2 g/kg/dia. Ômega-3 para controle inflamatório.</p>
+      <p><strong>Creatina:</strong> 3–5 g/dia — nível A de evidência.</p>
+      <p><strong>Intervalo descanso:</strong> 48–72h por grupo muscular.</p>
+    </div>
+
+    <div class="card" style="border-color:var(--xp)">
+      <div style="font-size:36px;margin-bottom:8px">🏃</div>
+      <h2 class="text-xp">ENDURECE</h2>
+      <p><strong>Objetivo:</strong> Performance aeróbica, economia de movimento.</p>
+      <p><strong>Carbo:</strong> 6–12 g/kg/dia. Periodização de carboidrato.</p>
+      <p><strong>Proteína:</strong> 1,4–1,8 g/kg/dia.</p>
+      <p><strong>Hidratação:</strong> Crítica. 500–750 ml/h + sódio.</p>
+      <p><strong>Estratégia:</strong> Reposição de glicogênio pós-treino imediata.</p>
+      <p><strong>Betarraba:</strong> Nitrato pode melhorar economia de corrida.</p>
+    </div>
+
+    <div class="card" style="border-color:var(--hp)">
+      <div style="font-size:36px;margin-bottom:8px">⚡</div>
+      <h2 class="text-hp">VELOCIDADE & POTÊNCIA</h2>
+      <p><strong>Objetivo:</strong> Sprints, saltos, mudanças de direção.</p>
+      <p><strong>Carbo:</strong> 5–8 g/kg/dia. Ênfase pré-treino.</p>
+      <p><strong>Proteína:</strong> 1,7–2,0 g/kg/dia.</p>
+      <p><strong>Cafeína:</strong> 3–6 mg/kg 30–60 min antes — eficaz comprovada.</p>
+      <p><strong>β-alanina:</strong> 3–6 g/dia para tamponar acidose muscular.</p>
+      <p><strong>Recuperação:</strong> Sono de qualidade é determinante.</p>
+    </div>
+
+    <div class="card">
+      <div style="font-size:36px;margin-bottom:8px">🤸</div>
+      <h2>ESPORTES DE HABILIDADE</h2>
+      <p><strong>Modalidades:</strong> Ginástica, escalada, artes marciais, skate,futebol,BV.</p>
+      <p><strong>Carbo:</strong> 3–6 g/kg/dia. Crucial para foco e coordenação.</p>
+      <p><strong>Proteína:</strong> 1,4–1,8 g/kg/dia.</p>
+      <p><strong>Hidratação:</strong> Determina tempo de reação e precisão.</p>
+      <p><strong>Composição:</strong> Muitas modalidades têm categorias de peso — atenção ao déficit calórico prolongado.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h2 style="color:var(--gold)">⚠ PRINCÍPIO UNIVERSAL</h2>
+    <p>Não importa a modalidade: a base é a mesma. Calorias adequadas, proteína suficiente, hidratação e sono. A especificidade está nos detalhes — timing de carboidrato, suplementação direcionada e periodização.</p>
+  </div>
+
+  <a href="/" class="back-link" style="margin-top:20px">← VOLTAR AO INÍCIO</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Macros 101 - NutriQuest</title>
+<meta name="description" content="Guia completo de macronutrientes: proteína, carboidrato e gordura para atletas." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--hp:#ff4757;--hp-glow:#ff6b81;--xp:#2ed573;--xp-glow:#7bed9f;--power:#3742fa;--power-glow:#5352ed;--bg:#0a0a0f;--bg2:#12121a;--bg-card:#1a1a2e;--bg-card-hover:#222240;--border:#2a2a4a;--text:#e8e8f0;--text-muted:#8888a0;--gold:#ffa502}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.font-pixel{font-family:'Press Start 2P',monospace}
+.container{max-width:800px;margin:0 auto;padding:40px 20px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-family:'Press Start 2P',monospace;font-size:12px;margin-bottom:12px}
+.card h3{font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:8px;color:var(--power)}
+.card p,.card li{color:var(--text-muted);font-size:14px;line-height:1.8}
+.card ul{list-style:none;padding:0}
+.card li{padding:4px 0;padding-left:16px;position:relative}
+.card li::before{content:'▸';position:absolute;left:0;color:var(--power)}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(18px,4vw,32px);margin-bottom:8px}
+.back-link{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;display:inline-block;margin-bottom:20px}
+.back-link:hover{color:var(--text)}
+.macro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.text-hp{color:var(--hp)}.text-xp{color:var(--xp)}.text-power{color:var(--power)}.text-gold{color:var(--gold)}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back-link">← VOLTAR</a>
+  <h1><span class="text-hp">MACROS</span> <span class="text-power">101</span></h1>
+  <p style="color:var(--text-muted);margin-bottom:30px;font-size:14px">O guia completo dos macronutrientes para otimizar sua performance.</p>
+
+  <div class="macro-grid">
+    <div class="card" style="border-color:var(--hp)">
+      <div style="font-size:40px;margin-bottom:8px">🧱</div>
+      <h2 class="text-hp">PROTEÍNA</h2>
+      <p><strong>Função:</strong> Reparação muscular, enzimas, hormônios, imunidade.</p>
+      <p><strong>Fontes:</strong> Carnes, ovos, laticínios, leguminosas, soja.</p>
+      <p><strong>Dose atleta:</strong> 1,6–2,2 g/kg/dia.</p>
+      <p><strong>Distribuição:</strong> 3–5 refeições com ~0,3–0,4 g/kg cada.</p>
+      <p><strong>Efeito térmico:</strong> ~20–30% (alta saciedade).</p>
+    </div>
+
+    <div class="card" style="border-color:var(--gold)">
+      <div style="font-size:40px;margin-bottom:8px">⚡</div>
+      <h2 class="text-gold">CARBOIDRATO</h2>
+      <p><strong>Função:</strong> Energia primária, glicogênio muscular, performance.</p>
+      <p><strong>Fontes:</strong> Grãos, tubérculos, frutas, cereais.</p>
+      <p><strong>Dose:</strong> 3–12 g/kg/dia (depende da modalidade).</p>
+      <p><strong>Timing:</strong> Pré-treino (1–4g/kg, 1–4h antes) e pós para repor.</p>
+      <p><strong>Tipo:</strong> Prefira complexos (baixo IG) no dia a dia.</p>
+    </div>
+
+    <div class="card" style="border-color:var(--xp)">
+      <div style="font-size:40px;margin-bottom:8px">🧈</div>
+      <h2 class="text-xp">GORDURA</h2>
+      <p><strong>Função:</strong> Hormônios, absorção de vitaminas, reserva energética.</p>
+      <p><strong>Fontes:</strong> Azeite, castanhas, abacate, peixes gordos, sementes.</p>
+      <p><strong>Dose:</strong> 0,8–1,5 g/kg/dia (~20–35% do total calórico).</p>
+      <p><strong>Essencial:</strong> Ômega-3 (EPA/DHA) para função anti-inflamatória.</p>
+      <p><strong>Satiedade:</strong> Alta — útil em dietas de restrição calórica.</p>
+    </div>
+
+    <div class="card">
+      <div style="font-size:40px;margin-bottom:8px">💧</div>
+      <h2>ÁLCOOL?</h2>
+      <p>7 kcal/g — não é macronutriente essencial. Prejudica recuperação, síntese proteica e sono. Moderar ou evitar perto de treinos.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--power);margin-top:8px">
+    <h2 class="text-power">📊 CALCULADORA RÁPIDA</h2>
+    <p>Para um atleta de <strong>70 kg</strong>:</p>
+    <ul>
+      <li><strong>Proteína:</strong> 1,8 g/kg → <strong>126 g/dia</strong> (~504 kcal)</li>
+      <li><strong>Carboidrato:</strong> 5 g/kg → <strong>350 g/dia</strong> (~1400 kcal)</li>
+      <li><strong>Gordura:</strong> 1 g/kg → <strong>70 g/dia</strong> (~630 kcal)</li>
+      <li><strong>Total estimado:</strong> ~2534 kcal/dia</li>
+    </ul>
+    <p style="margin-top:12px;font-size:12px;color:var(--text-muted)">Ajuste as proporções conforme seu objetivo (déficit, manutenção, superávit) e modalidade.</p>
+  </div>
+
+  <a href="/" class="back-link" style="margin-top:20px">← VOLTAR AO INÍCIO</a>
+</div>
+</body>
+</html>

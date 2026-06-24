@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scanner de comida - NutriQuest</title>
+<meta name="description" content="Pesquise alimentos da Quest: calorias, macronutrientes, minerais e vitaminas." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<script src="/assets/taco-data.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--hp:#ff4757;--hp-glow:#ff6b81;--xp:#2ed573;--xp-glow:#7bed9f;--power:#3742fa;--power-glow:#5352ed;--bg:#0a0a0f;--bg2:#12121a;--bg-card:#1a1a2e;--bg-card-hover:#222240;--border:#2a2a4a;--text:#e8e8f0;--text-muted:#8888a0;--gold:#ffa502}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.font-pixel{font-family:'Press Start 2P',monospace}
+.container{max-width:900px;margin:0 auto;padding:40px 20px}
+.card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+.card h2{font-family:'Press Start 2P',monospace;font-size:11px;margin-bottom:10px}
+.card p,.card li{color:var(--text-muted);font-size:13px;line-height:1.8}
+h1{font-family:'Press Start 2P',monospace;font-size:clamp(18px,4vw,32px);margin-bottom:8px}
+.back-link{font-family:'Press Start 2P',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;display:inline-block;margin-bottom:20px}
+.back-link:hover{color:var(--text)}
+.text-hp{color:var(--hp)}.text-power{color:var(--power)}.text-xp{color:var(--xp)}.text-gold{color:var(--gold)}
+input{font-family:inherit;width:100%;padding:12px 16px;border-radius:8px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:15px;outline:none;margin-bottom:12px}
+input:focus{border-color:var(--power)}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.search-results{max-height:300px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;margin-bottom:16px}
+.search-results button{width:100%;text-align:left;padding:10px 14px;background:none;border:none;border-bottom:1px solid var(--border);color:var(--text);cursor:pointer;font-size:13px;display:flex;justify-content:space-between;gap:12px;transition:background 0.2s}
+.search-results button:hover{background:var(--bg-card)}
+.search-results button .cat{font-size:11px;color:var(--text-muted)}
+.nutrient-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:16px}
+.nutrient-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px}
+.nutrient-card h3{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--power);margin-bottom:10px}
+.nutrient-item{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px}
+.nutrient-item .label{color:var(--text-muted)}
+.nutrient-item .value{color:var(--text)}
+.calorie-box{display:inline-flex;flex-direction:column;align-items:center;padding:12px 24px;border:2px solid var(--hp);border-radius:8px;margin-right:12px}
+.porcao-input{width:100px;padding:8px 12px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;text-align:center}
+.food-header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:16px;margin-bottom:16px}
+.selected-food .badge{display:inline-block;padding:4px 10px;border-radius:4px;background:var(--bg2);border:1px solid var(--border);font-family:'Press Start 2P',monospace;font-size:8px;color:var(--text-muted);margin-bottom:8px}
+
+@media(max-width:768px){
+  .container{padding:20px 14px}
+  .nutrient-grid{grid-template-columns:1fr}
+  .food-header{flex-direction:column;align-items:flex-start;gap:12px}
+  .calorie-box{margin-right:0;width:100%;justify-content:center}
+  .porcao-input{width:100%}
+  .search-results{max-height:220px}
+}
+@media(max-width:480px){
+  h1{font-size:16px}
+  .back-link{font-size:8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="/" class="back-link">← VOLTAR</a>
+  <h1><span class="text-hp">COMIDA</span> <span class="text-power">SCANNER</span></h1>
+  <p style="color:var(--text-muted);margin-bottom:24px;font-size:14px">Pesquise qualquer alimento e veja calorias, macros, minerais e vitaminas. Dados da <strong>TACO</strong>. Valores por 100 g (ajuste a porção abaixo).</p>
+
+  <div class="card" id="searchCard">
+    <input type="text" id="searchInput" placeholder="Buscar alimento (ex: arroz, frango, banana, feijão...)" autofocus />
+    <div class="search-results" id="searchResults"></div>
+    <p id="noResults" style="display:none;color:var(--text-muted);font-size:13px">Nenhum alimento encontrado.</p>
+  </div>
+
+  <div id="foodDetail" style="display:none"></div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px">
+    <a href="/lista-compras.html" class="back-link" style="margin:0">🛒 LISTA DE COMPRAS</a>
+    <a href="/macros.html" class="back-link" style="margin:0">📖 MACROS 101</a>
+  </div>
+</div>
+  <a href="/minha-lista.html" class="back-link" style="margin-top:12px">📋 MINHA LISTA DE ALIMENTOS</a>
+
+<script>
+const foodData = TACO_FOODS;
+
+function normalize(str) {
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+const noResults = document.getElementById('noResults');
+const foodDetail = document.getElementById('foodDetail');
+
+let selectedFood = null;
+let porcao = 100;
+
+function fmt(val, dec) {
+  if (val == null) return '-';
+  dec = dec || 1;
+  return Number(val).toFixed(dec);
+}
+
+function doSearch() {
+  const q = normalize(searchInput.value.trim());
+  if (!q) {
+    searchResults.innerHTML = '';
+    searchResults.style.display = 'none';
+    noResults.style.display = 'none';
+    return;
+  }
+  const results = foodData.filter(f => normalize(f.nome).includes(q)).slice(0, 30);
+  if (results.length) {
+    searchResults.style.display = 'block';
+    noResults.style.display = 'none';
+    searchResults.innerHTML = results.map(f => 
+      `<button onclick="selectFood(${f.id})"><span>${f.nome}</span><span class="cat">${f.categoria}</span></button>`
+    ).join('');
+  } else {
+    searchResults.style.display = 'none';
+    noResults.style.display = 'block';
+  }
+}
+
+function selectFood(id) {
+  const food = foodData.find(f => f.id === id);
+  if (!food) return;
+  selectedFood = food;
+  porcao = 100;
+  searchInput.value = food.nome;
+  searchResults.style.display = 'none';
+  noResults.style.display = 'none';
+  renderFoodDetail();
+}
+
+function renderFoodDetail() {
+  if (!selectedFood) return;
+  const f = selectedFood;
+  const factor = porcao / 100;
+  
+  const kcal = f.kcal != null ? (f.kcal * factor).toFixed(0) : '-';
+  
+  const macros = [
+    {key:'proteina',label:'Proteína',unit:'g'},
+    {key:'carboidrato',label:'Carboidrato',unit:'g'},
+    {key:'lipideos',label:'Lipídeos',unit:'g'},
+    {key:'fibra',label:'Fibra',unit:'g'},
+    {key:'colesterol',label:'Colesterol',unit:'mg'}
+  ];
+  const minerais = [
+    {key:'calcio',label:'Cálcio',unit:'mg'},
+    {key:'magnesio',label:'Magnésio',unit:'mg'},
+    {key:'fosforo',label:'Fósforo',unit:'mg'},
+    {key:'ferro',label:'Ferro',unit:'mg'},
+    {key:'sodio',label:'Sódio',unit:'mg'},
+    {key:'potassio',label:'Potássio',unit:'mg'},
+    {key:'zinco',label:'Zinco',unit:'mg'}
+  ];
+  const vitaminas = [
+    {key:'rae',label:'Vit. A (RAE)',unit:'mcg'},
+    {key:'tiamina',label:'B1 Tiamina',unit:'mg'},
+    {key:'riboflavina',label:'B2 Riboflavina',unit:'mg'},
+    {key:'piridoxina',label:'B6 Piridoxina',unit:'mg'},
+    {key:'niacina',label:'B3 Niacina',unit:'mg'},
+    {key:'vitc',label:'Vitamina C',unit:'mg'}
+  ];
+
+  function renderNutrientList(items) {
+    return items.map(n => {
+      const val = f[n.key] != null ? (f[n.key] * factor) : null;
+      return `<div class="nutrient-item"><span class="label">${n.label}</span><span class="value">${fmt(val, 2)} ${n.unit}</span></div>`;
+    }).join('');
+  }
+
+  foodDetail.style.display = 'block';
+  foodDetail.innerHTML = `
+    <div class="card" style="border-color:var(--power)">
+      <span class="badge">${f.categoria}</span>
+      <h2 style="font-size:16px;margin-bottom:4px">${f.nome}</h2>
+      <div class="food-header">
+        <div>
+          <label style="font-size:12px;color:var(--text-muted);margin-bottom:4px;display:block">Porção (g)</label>
+          <input type="number" class="porcao-input" value="${porcao}" min="1" onchange="updatePorcao(this.value)" />
+        </div>
+        <div class="calorie-box">
+          <span style="font-size:9px;font-family:'Press Start 2P',monospace;color:var(--text-muted)">CALORIAS</span>
+          <span style="font-family:'Press Start 2P',monospace;font-size:22px;color:var(--hp)">${kcal} <span style="font-size:11px">kcal</span></span>
+        </div>
+        <button onclick="resetSearch()" style="padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:var(--bg2);color:var(--text);cursor:pointer;font-size:12px">Nova busca</button>
+      </div>
+
+      <div class="nutrient-grid">
+        <div class="nutrient-card">
+          <h3>MACRONUTRIENTES</h3>
+          ${renderNutrientList(macros)}
+        </div>
+        <div class="nutrient-card">
+          <h3>MINERAIS</h3>
+          ${renderNutrientList(minerais)}
+        </div>
+        <div class="nutrient-card">
+          <h3>VITAMINAS</h3>
+          ${renderNutrientList(vitaminas)}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updatePorcao(val) {
+  porcao = Math.max(1, Number(val) || 0);
+  renderFoodDetail();
+}
+
+function resetSearch() {
+  selectedFood = null;
+  foodDetail.style.display = 'none';
+  searchInput.value = '';
+  searchInput.focus();
+  searchResults.innerHTML = '';
+  noResults.style.display = 'none';
+}
+
+searchInput.addEventListener('input', doSearch);
+searchInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') resetSearch();
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+  searchInput.focus();
+});
+</script>
+</body>
+</html>

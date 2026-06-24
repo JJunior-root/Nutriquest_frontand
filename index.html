@@ -1,0 +1,1545 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NutriQuest - Nutrição Esportiva em Modo Jogo</title>
+<meta name="description" content="Aprenda nutrição esportiva e saúde do atleta de um jeito gamer: energia, REDs, hidratação e suplementos comprovados em scroll telling." />
+<meta name="author" content="NutriQuest" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="NutriQuest - Nutrição Esportiva em Modo Jogo" />
+<meta property="og:description" content="Aprenda nutrição esportiva e saúde do atleta de um jeito gamer: energia, REDs, hidratação e suplementos comprovados em scroll telling." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="NutriQuest - Nutrição Esportiva em Modo Jogo" />
+<meta name="twitter:description" content="Aprenda nutrição esportiva e saúde do atleta de um jeito gamer: energia, REDs, hidratação e suplementos comprovados em scroll telling." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<link rel="icon" type="image/x-icon" href="/favicon.ico" />
+<style>
+/* ===================== RESET & BASE ===================== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --hp:#ff4757;
+  --hp-glow:#ff6b81;
+  --xp:#2ed573;
+  --xp-glow:#7bed9f;
+  --power:#3742fa;
+  --power-glow:#5352ed;
+  --bg:#0a0a0f;
+  --bg2:#12121a;
+  --bg-card:#1a1a2e;
+  --bg-card-hover:#222240;
+  --border:#2a2a4a;
+  --text:#e8e8f0;
+  --text-muted:#8888a0;
+  --gold:#ffa502;
+  --gold-dim:#cc8800;
+  --orange:#ff6348;
+  --yellow:#ffd93d;
+  --red:#ff4757;
+  --green:#2ed573;
+  --cyan:#00d2d3;
+  --purple:#a29bfe;
+  --pink:#fd79a8;
+  --section-gap:60px;
+  font-size:16px;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+.font-pixel{font-family:'Press Start 2P',monospace;letter-spacing:-0.02em;line-height:1.6}
+
+/* ===================== SCROLLBAR ===================== */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ===================== NAV ===================== */
+.nav-bar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(10,10,15,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:10px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+}
+.nav-hud{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hp-bar,.xp-bar{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Press Start 2P',monospace;font-size:9px;
+}
+.hp-bar .bar-track,.xp-bar .bar-track{
+  width:100px;height:10px;background:var(--bg2);border-radius:4px;
+  border:1px solid var(--border);overflow:hidden;position:relative;
+}
+.hp-bar .bar-fill{
+  height:100%;background:linear-gradient(90deg,var(--hp),var(--hp-glow));
+  border-radius:3px;transition:width 0.5s ease;
+}
+.xp-bar .bar-fill{
+  height:100%;background:linear-gradient(90deg,var(--xp),var(--xp-glow));
+  border-radius:3px;transition:width 0.5s ease;
+}
+.hp-bar .bar-label{color:var(--hp);font-size:8px}
+.xp-bar .bar-label{color:var(--xp);font-size:8px}
+.hp-bar .bar-text,.xp-bar .bar-text{color:var(--text-muted);font-size:7px}
+
+.nav-links{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.nav-links a{
+  font-family:'Press Start 2P',monospace;
+  font-size:8px;padding:6px 10px;
+  color:var(--text-muted);text-decoration:none;
+  border:1px solid var(--border);border-radius:4px;
+  transition:all 0.2s;white-space:nowrap;
+}
+.nav-links a:hover{color:var(--text);border-color:var(--power);background:var(--bg-card)}
+
+/* ===================== HERO ===================== */
+.hero-section{
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:100px 20px 60px;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(55,66,250,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 50%, rgba(255,71,87,0.08) 0%, transparent 60%),
+    var(--bg);
+  position:relative;overflow:hidden;
+}
+.hero-section::before{
+  content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+.phase-badge{
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;color:var(--gold);margin-bottom:16px;
+  border:1px solid var(--gold);padding:8px 16px;border-radius:4px;
+  background:rgba(255,165,2,0.05);
+}
+.hero-title{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(20px,5vw,42px);line-height:1.4;
+  margin-bottom:20px;position:relative;
+}
+.hero-title .line1{color:var(--hp);text-shadow:0 0 20px var(--hp-glow)}
+.hero-title .line2{color:var(--power);text-shadow:0 0 20px var(--power-glow)}
+.hero-sub{
+  max-width:600px;color:var(--text-muted);margin-bottom:30px;
+  font-size:14px;line-height:1.8;
+}
+.hero-sub strong{color:var(--text)}
+.hero-stats{
+  display:flex;gap:40px;margin-bottom:32px;flex-wrap:wrap;justify-content:center;
+}
+.stat-item{
+  text-align:center;
+}
+.stat-value{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(16px,3vw,32px);
+  text-shadow:0 0 10px currentColor;
+}
+.stat-value.hp{color:var(--hp)}
+.stat-value.xp{color:var(--xp)}
+.stat-label{
+  font-family:'Press Start 2P',monospace;
+  font-size:8px;color:var(--text-muted);margin-top:4px;
+}
+
+.hero-nav{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:40px;
+}
+.hero-nav a{
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;padding:10px 18px;
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--text);text-decoration:none;
+  transition:all 0.3s;background:var(--bg-card);
+}
+.hero-nav a:hover{
+  border-color:var(--power);background:var(--bg-card-hover);
+  transform:translateY(-2px);box-shadow:0 4px 20px rgba(55,66,250,0.2);
+}
+.hero-nav a.primary{
+  border-color:var(--hp);color:var(--hp);
+  box-shadow:0 0 0 1px var(--hp);
+}
+.hero-nav a.primary:hover{
+  background:rgba(255,71,87,0.1);
+  box-shadow:0 0 20px rgba(255,71,87,0.3);
+}
+
+.hero-image-wrap{
+  width:100%;max-width:600px;border-radius:12px;overflow:hidden;
+  border:1px solid var(--border);margin-bottom:30px;
+  box-shadow:0 0 40px rgba(55,66,250,0.15);
+}
+.hero-image-wrap img{width:100%;display:block}
+
+.scroll-down{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--text-muted);text-decoration:none;
+  font-family:'Press Start 2P',monospace;font-size:10px;
+  transition:color 0.2s;
+  animation:bounce 2s infinite;
+}
+.scroll-down:hover{color:var(--text)}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* ===================== SECTIONS ===================== */
+.section{
+  padding:80px 20px;max-width:1000px;margin:0 auto;
+  border-bottom:1px solid var(--border);
+}
+.section:last-child{border-bottom:none}
+.section-header{
+  margin-bottom:40px;
+}
+.phase-num{
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;color:var(--gold);
+  margin-bottom:12px;
+}
+.section-title{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(16px,3vw,28px);
+  margin-bottom:16px;
+}
+.section-desc{
+  color:var(--text-muted);font-size:14px;max-width:700px;
+}
+
+/* ===================== CARDS ===================== */
+.card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin-bottom:20px;
+  transition:all 0.3s;
+}
+.card:hover{border-color:var(--power);background:var(--bg-card-hover)}
+.card-glow{border-color:var(--power);box-shadow:0 0 20px rgba(55,66,250,0.1)}
+.card-hp{border-color:var(--hp)}
+.card-xp{border-color:var(--xp)}
+.card-gold{border-color:var(--gold)}
+
+.card-icon{font-size:32px;margin-bottom:12px}
+.card h3{
+  font-family:'Press Start 2P',monospace;
+  font-size:12px;margin-bottom:8px;
+}
+.card h4{
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;margin-bottom:6px;
+}
+.card p,.card li{color:var(--text-muted);font-size:13px;line-height:1.8}
+.card ul{list-style:none;padding:0}
+.card li{padding:4px 0;padding-left:16px;position:relative}
+.card li::before{content:'▸';position:absolute;left:0;color:var(--power)}
+
+/* ===================== FORMULA ===================== */
+.formula-box{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;padding:16px 20px;text-align:center;
+  font-family:'Press Start 2P',monospace;font-size:11px;
+  color:var(--gold);margin:16px 0;
+}
+
+.semaphore{
+  display:flex;gap:8px;margin:20px 0;
+}
+.semaphore-btn{
+  padding:12px 24px;border-radius:8px;
+  font-family:'Press Start 2P',monospace;font-size:9px;
+  cursor:pointer;transition:all 0.3s;
+  border:2px solid transparent;background:var(--bg2);
+  color:var(--text-muted);flex:1;text-align:center;
+}
+.semaphore-btn.active{transform:scale(1.05)}
+.semaphore-btn.green{border-color:var(--green)}
+.semaphore-btn.green.active{background:rgba(46,213,115,0.15);color:var(--green);box-shadow:0 0 20px rgba(46,213,115,0.2)}
+.semaphore-btn.yellow{border-color:var(--yellow)}
+.semaphore-btn.yellow.active{background:rgba(255,217,61,0.15);color:var(--yellow);box-shadow:0 0 20px rgba(255,217,61,0.2)}
+.semaphore-btn.orange{border-color:var(--orange)}
+.semaphore-btn.orange.active{background:rgba(255,99,72,0.15);color:var(--orange);box-shadow:0 0 20px rgba(255,99,72,0.2)}
+.semaphore-btn.red{border-color:var(--red)}
+.semaphore-btn.red.active{background:rgba(255,71,87,0.15);color:var(--red);box-shadow:0 0 20px rgba(255,71,87,0.2)}
+.semaphore-content{
+  display:none;background:var(--bg2);border:1px solid var(--border);
+  border-radius:8px;padding:20px;margin-top:12px;
+}
+.semaphore-content.active{display:block}
+
+.boss-warning{
+  background:rgba(255,71,87,0.08);border:1px solid var(--red);
+  border-radius:8px;padding:16px 20px;margin:16px 0;
+}
+.boss-warning h4{color:var(--red);font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:8px}
+.boss-warning p{color:var(--text-muted);font-size:13px}
+
+/* ===================== STRATEGY CARDS ===================== */
+.strategy-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;margin:24px 0;align-items:start;
+}
+.strategy-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:20px;cursor:pointer;
+  transition:all 0.3s;position:relative;
+}
+.strategy-card:hover{border-color:var(--power)}
+.strategy-card .icon{font-size:28px;margin-bottom:8px}
+.strategy-card h3{font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:4px}
+.strategy-card .difficulty{
+  font-size:9px;color:var(--gold);margin-bottom:8px;
+}
+.strategy-card .desc{color:var(--text-muted);font-size:12px;line-height:1.7}
+.strategy-card .pros-cons{
+  display:none;margin-top:12px;padding-top:12px;
+  border-top:1px solid var(--border);
+}
+.strategy-card .pros-cons h4{
+  font-family:'Press Start 2P',monospace;font-size:8px;margin-bottom:6px;
+}
+.strategy-card .pros-cons .pros{color:var(--xp)}
+.strategy-card .pros-cons .cons{color:var(--hp);margin-top:8px}
+.strategy-card .pros-cons ul{list-style:none}
+.strategy-card .pros-cons li{padding:2px 0;padding-left:14px;position:relative;font-size:12px}
+.strategy-card .pros-cons .pros li::before{content:'+';position:absolute;left:0;color:var(--xp)}
+.strategy-card .pros-cons .cons li::before{content:'-';position:absolute;left:0;color:var(--hp)}
+.strategy-card .expand-hint{
+  position:absolute;top:12px;right:12px;
+  font-size:10px;color:var(--text-muted);
+  transition:transform 0.3s;
+}
+.strategy-card.expanded .expand-hint{transform:rotate(180deg)}
+
+/* ===================== ELECTROLYTES ===================== */
+.electrolyte-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:12px;margin:16px 0;
+}
+
+/* ===================== POWER-UPS ===================== */
+.powerup-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:16px;margin:20px 0;
+}
+.powerup-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:20px;position:relative;overflow:hidden;
+  transition:all 0.3s;
+}
+.powerup-card:hover{border-color:var(--power);transform:translateY(-2px)}
+.powerup-card .rarity{
+  position:absolute;top:0;right:0;
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  padding:4px 8px;border-radius:0 12px 0 8px;
+}
+.powerup-card .rarity.epic{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff}
+.powerup-card .rarity.legendary{background:linear-gradient(135deg,var(--gold),var(--orange));color:#000}
+.powerup-card .rarity.rare{background:linear-gradient(135deg,var(--cyan),var(--power));color:#fff}
+.powerup-card .icon{font-size:32px;margin-bottom:8px}
+.powerup-card h3{font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:2px}
+.powerup-card .subtitle{font-family:'Press Start 2P',monospace;font-size:7px;color:var(--text-muted);margin-bottom:10px}
+.powerup-card .effect-label{
+  font-family:'Press Start 2P',monospace;font-size:7px;color:var(--power);margin:8px 0 4px;
+}
+.powerup-card p{color:var(--text-muted);font-size:12px;line-height:1.7}
+.powerup-card .detail-row{
+  display:flex;justify-content:space-between;padding:4px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:12px;
+}
+.powerup-card .detail-row .label{color:var(--text-muted)}
+.powerup-card .detail-row .value{color:var(--text)}
+
+/* ===================== DAILY QUEST ===================== */
+.quest-container{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin:20px 0;
+}
+.quest-header{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px;flex-wrap:wrap;gap:12px;
+}
+.quest-xp{
+  font-family:'Press Start 2P',monospace;
+  font-size:10px;color:var(--xp);
+}
+.quest-progress{
+  width:100%;height:8px;background:var(--bg2);border-radius:4px;
+  overflow:hidden;margin-bottom:20px;
+}
+.quest-progress-fill{
+  height:100%;background:linear-gradient(90deg,var(--xp),var(--xp-glow));
+  border-radius:4px;transition:width 0.5s ease;
+}
+.quest-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:8px;
+  border:1px solid var(--border);margin-bottom:8px;
+  cursor:pointer;transition:all 0.2s;
+}
+.quest-item:hover{border-color:var(--power)}
+.quest-item.done{opacity:0.5;border-color:var(--xp);background:rgba(46,213,115,0.05)}
+.quest-item.done .quest-text{text-decoration:line-through}
+.quest-check{
+  width:20px;height:20px;border:2px solid var(--border);
+  border-radius:4px;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all 0.2s;
+  font-size:12px;
+}
+.quest-item.done .quest-check{background:var(--xp);border-color:var(--xp);color:#000}
+.quest-icon{font-size:18px;flex-shrink:0}
+.quest-text{flex:1;font-size:13px}
+.quest-text .sub{display:block;font-size:11px;color:var(--text-muted)}
+
+.quest-footer{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:16px;flex-wrap:wrap;gap:10px;
+}
+.quest-date{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--text-muted)}
+.quest-btns{display:flex;gap:8px}
+.quest-btn{
+  font-family:'Press Start 2P',monospace;font-size:8px;
+  padding:8px 14px;border:1px solid var(--border);border-radius:6px;
+  background:var(--bg2);color:var(--text-muted);cursor:pointer;
+  transition:all 0.2s;
+}
+.quest-btn:hover{border-color:var(--power);color:var(--text);background:var(--bg-card)}
+
+/* ===================== XP HISTORY ===================== */
+.history-container{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:24px;margin:20px 0;
+}
+.history-tabs{display:flex;gap:8px;margin-bottom:16px}
+.history-tab{
+  font-family:'Press Start 2P',monospace;font-size:8px;
+  padding:6px 14px;border:1px solid var(--border);border-radius:4px;
+  background:var(--bg2);color:var(--text-muted);cursor:pointer;
+  transition:all 0.2s;
+}
+.history-tab.active{border-color:var(--power);color:var(--text);background:var(--bg-card)}
+.history-tab:hover{border-color:var(--power)}
+.history-chart{
+  display:flex;align-items:flex-end;gap:6px;height:120px;
+  padding:10px 0;position:relative;
+}
+.chart-bar{
+  flex:1;border-radius:4px 4px 0 0;
+  background:linear-gradient(180deg,var(--power),var(--power-glow));
+  min-height:4px;transition:height 0.5s ease;position:relative;
+}
+.chart-bar .bar-value{
+  position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  font-size:9px;color:var(--text-muted);white-space:nowrap;
+  margin-bottom:4px;
+}
+.chart-bar .bar-label{
+  position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  font-size:7px;color:var(--text-muted);margin-top:4px;white-space:nowrap;
+}
+.history-stats{
+  display:flex;gap:24px;margin-top:20px;flex-wrap:wrap;
+}
+.history-stat{
+  text-align:center;
+}
+.history-stat .value{
+  font-family:'Press Start 2P',monospace;font-size:16px;color:var(--xp);
+  display:block;
+}
+.history-stat .label{font-size:11px;color:var(--text-muted)}
+
+/* ===================== DANGER ZONE ===================== */
+.danger-zone{
+  background:rgba(255,71,87,0.06);border:2px solid var(--red);
+  border-radius:12px;padding:20px;margin:16px 0;
+}
+.danger-zone h3{color:var(--red);font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:8px}
+.danger-zone ul{list-style:none;padding:0}
+.danger-zone li{padding:4px 0;padding-left:16px;position:relative;font-size:13px;color:var(--text-muted)}
+.danger-zone li::before{content:'▸';position:absolute;left:0;color:var(--red)}
+
+/* ===================== TIMELINE ===================== */
+.timeline{
+  position:relative;padding-left:24px;margin:16px 0;
+}
+.timeline::before{
+  content:'';position:absolute;left:8px;top:0;bottom:0;
+  width:2px;background:var(--border);
+}
+.timeline-item{
+  position:relative;padding:8px 0 8px 16px;border-left:2px solid transparent;
+  transition:all 0.3s;
+}
+.timeline-item .time{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--power);display:block;margin-bottom:4px}
+.timeline-item .desc{font-size:13px;color:var(--text-muted)}
+
+/* ===================== REGUA ===================== */
+.regua{
+  display:flex;height:30px;border-radius:6px;overflow:hidden;
+  margin:12px 0;border:1px solid var(--border);
+}
+.regua-segment{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  font-family:'Press Start 2P',monospace;font-size:8px;
+  transition:all 0.3s;cursor:default;
+}
+.regua-segment.ok{background:rgba(46,213,115,0.2);color:var(--green)}
+.regua-segment.leve{background:rgba(255,217,61,0.2);color:var(--yellow)}
+.regua-segment.severa{background:rgba(255,99,72,0.2);color:var(--orange)}
+.regua-segment.hipertermia{background:rgba(255,71,87,0.2);color:var(--red)}
+.regua-segment.active{transform:scaleY(1.15);font-weight:bold;box-shadow:inset 0 0 20px rgba(255,255,255,0.1)}
+
+/* ===================== CHEAT CODE ===================== */
+.cheat-code{
+  background:linear-gradient(135deg,rgba(55,66,250,0.1),rgba(46,213,115,0.1));
+  border:1px solid var(--gold);border-radius:8px;
+  padding:14px 20px;margin:12px 0;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.cheat-code .badge{
+  font-family:'Press Start 2P',monospace;font-size:8px;
+  color:#000;background:var(--gold);padding:4px 8px;border-radius:4px;
+}
+.cheat-code p{font-size:13px;color:var(--text-muted);flex:1}
+.cheat-code strong{color:var(--gold)}
+
+/* ===================== NOTIFICATION ===================== */
+.notification{
+  position:fixed;bottom:80px;right:20px;z-index:1000;
+  background:var(--bg-card);border:1px solid var(--xp);
+  border-radius:8px;padding:12px 20px;
+  font-family:'Press Start 2P',monospace;font-size:9px;
+  color:var(--xp);box-shadow:0 4px 20px rgba(0,0,0,0.5);
+  transform:translateY(100px);opacity:0;
+  transition:all 0.4s ease;
+}
+.notification.show{transform:translateY(0);opacity:1}
+
+/* ===================== FOOTER ===================== */
+.footer{
+  text-align:center;padding:40px 20px;
+  border-top:1px solid var(--border);
+}
+.footer p{font-size:12px;color:var(--text-muted)}
+.footer a{color:var(--power);text-decoration:none}
+.footer a:hover{text-decoration:underline}
+.footer .disclaimer{
+  max-width:600px;margin:12px auto 0;
+  font-size:11px;color:var(--text-muted);opacity:0.7;
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media(max-width:768px){
+  .nav-bar{flex-direction:column;padding:8px 12px;gap:8px}
+  .nav-links{justify-content:center}
+  .nav-links a{font-size:7px;padding:4px 8px}
+  .hero-nav a{font-size:8px;padding:8px 12px}
+  .strategy-grid{grid-template-columns:1fr}
+  .powerup-grid{grid-template-columns:1fr}
+  .electrolyte-grid{grid-template-columns:repeat(2,1fr)}
+  .semaphore{flex-wrap:wrap}
+  .semaphore-btn{flex:1 1 45%}
+  .section{padding:60px 16px}
+  .history-chart{height:80px}
+}
+
+@media(max-width:480px){
+  .nav-hud{gap:8px}
+  .hp-bar .bar-track,.xp-bar .bar-track{width:60px}
+  .hero-stats{gap:20px}
+  .electrolyte-grid{grid-template-columns:1fr}
+}
+
+/* ===================== UTILITY ===================== */
+.glow-hp{text-shadow:0 0 20px var(--hp-glow)}
+.glow-xp{text-shadow:0 0 20px var(--xp-glow)}
+.glow-power{text-shadow:0 0 20px var(--power-glow)}
+.glow-gold{text-shadow:0 0 20px var(--gold)}
+.text-hp{color:var(--hp)}
+.text-xp{color:var(--xp)}
+.text-power{color:var(--power)}
+.text-gold{color:var(--gold)}
+.text-muted{color:var(--text-muted)}
+.mt-8{margin-top:8px}
+.mt-16{margin-top:16px}
+.mt-24{margin-top:24px}
+.mb-8{margin-bottom:8px}
+.mb-16{margin-bottom:16px}
+.mb-24{margin-bottom:24px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ===================== NAV ===================== -->
+<nav class="nav-bar">
+  <div class="nav-hud">
+    <div class="hp-bar">
+      <span class="bar-label" style="color:var(--hp)">HP</span>
+      <div class="bar-track"><div class="bar-fill" id="hpFill" style="width:100%"></div></div>
+      <span class="bar-text"><span id="hpText">100</span>/100</span>
+    </div>
+    <div class="xp-bar">
+      <span class="bar-label" style="color:var(--xp)">XP</span>
+      <div class="bar-track"><div class="bar-fill" id="xpFill" style="width:0%"></div></div>
+      <span class="bar-text"><span id="xpText">0</span> / ∞</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#energia">▶ INICIAR</a>
+    <a href="#powerups">ARSENAL</a>
+    <a href="/macros.html">📖 MACROS 101</a>
+    <a href="/esportes.html">🏟 ESPORTES</a>
+    <a href="/alimentos.html">🔎 ALIMENTOS</a>
+    <a href="/lista-compras.html">🛒 LISTA</a>
+    <a href="login.html" style="border-color:var(--hp);color:var(--hp);background:rgba(255,71,87,0.1)">🔐 LOGIN</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero-section" id="start">
+  <div class="phase-badge">NÍVEL 1 — START</div>
+  <h1 class="hero-title">
+    <span class="line1">Seu corpo é o console.</span><br/>
+    <span class="line2">A comida é o código.</span>
+  </h1>
+  <p class="hero-sub">
+    Bem-vindo ao <strong>NutriQuest</strong>: o guia gamer da nutrição esportiva.
+    Desbloqueie seu modo lendário com a ciência por trás de cada gota de suor, garfada e treino.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-value hp">100/100</div>
+      <div class="stat-label">HP</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-value xp">0 / ∞</div>
+      <div class="stat-label">XP</div>
+    </div>
+  </div>
+  <div class="hero-nav">
+    <a href="#energia" class="primary">▶ INICIAR O TREINAMENTO</a>
+    <a href="#powerups">VER ARSENAL</a>
+    <a href="/macros.html">📖 MACROS 101</a>
+    <a href="/esportes.html">🏟 ESPORTES</a>
+    <a href="/alimentos.html">🔎 ALIMENTOS (TACO)</a>
+    <a href="/lista-compras.html">🛒 LISTA DE COMPRAS</a>
+  </div>
+  <div class="hero-image-wrap">
+  <img src="img/Heroi.png" alt="Logo">
+  <a href="#energia" class="scroll-down">▼ SCROLL</a>
+</section>
+
+<!-- ===================== FASE 2 ===================== -->
+<section class="section" id="energia">
+  <div class="section-header">
+    <div class="phase-num">FASE 2</div>
+    <h2 class="section-title">A Bateria do Corpo &amp; o Sistema de Alerta</h2>
+    <p class="section-desc">
+      Imagine seu corpo como um celular. Toda vez que você treina, gasta bateria.
+      Toda vez que come, recarrega. Quando você gasta muito mais do que recarrega
+      por dias seguidos, o sistema entra em <strong>modo economia extrema</strong>:
+      é a <strong>Síndrome REDs</strong> (Deficiência Relativa de Energia no Esporte).
+    </p>
+  </div>
+
+  <div class="card card-glow">
+    <div class="card-icon">📖</div>
+    <h3>O QUE É A SÍNDROME REDs?</h3>
+    <p>
+      <strong>REDs</strong> (Relative Energy Deficiency in Sport) acontece quando a
+      <strong>energia disponível</strong> — o que sobra de calorias depois do gasto do treino —
+      fica baixa demais para manter as funções vitais. O corpo prioriza o que mantém
+      você vivo e <strong>desliga</strong> o que não é essencial: hormônios sexuais, tireoide,
+      formação óssea, imunidade e até a libido.
+    </p>
+    <div class="formula-box">
+      Energia Disponível = (kcal ingeridas − kcal do exercício) ÷ kg de massa magra
+    </div>
+    <p>
+      Abaixo de <strong>30 kcal/kg de massa magra</strong> por tempo prolongado,
+      o jogo entra em modo crítico. Atinge <strong>homens e mulheres</strong> — não é
+      só um problema de atleta de elite. Estudante de educação física, corredor amador
+      e frequentador de academia que "esqueceu" de comer também caem nessa cilada.
+    </p>
+  </div>
+
+  <div class="card card-hp">
+    <div class="card-icon">🛠</div>
+    <h3>RECUPERAÇÃO MUSCULAR — COMO O CORPO SE CONSERTA</h3>
+    <p>Treinar é causar <strong>microlesões</strong> nas fibras musculares de propósito. Quem reconstrói esse "save" mais forte que antes é a <strong>recuperação</strong> — não o treino em si.</p>
+    <ul>
+      <li><strong>Proteína (1,6–2,2 g/kg/dia):</strong> matéria-prima dos tijolos novos.</li>
+      <li><strong>Carboidrato:</strong> repõe glicogênio gasto e poupa proteína.</li>
+      <li><strong>Sono 7–9h:</strong> pico de GH e síntese proteica acontece dormindo.</li>
+      <li><strong>Descanso entre sessões:</strong> 24–72h por grupo muscular.</li>
+      <li><strong>Hidratação:</strong> músculo desidratado = recuperação travada.</li>
+    </ul>
+    <p style="margin-top:12px;color:var(--hp)">Sem recuperação, treino vira só desgaste. Você gasta bateria e não atualiza o firmware.</p>
+  </div>
+
+  <div style="max-width:400px;margin:20px auto;border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+    <img src="https://avatar-fuel-forge.lovable.app/assets/reds-battery-Crr6kGID.png" alt="Ícone de bateria humana drenada com hormônios dormindo" style="width:100%;display:block" loading="lazy" />
+  </div>
+
+  <div class="formula-box" style="font-size:10px">VERDE ≥ 45 kcal/kg de massa magra</div>
+
+  <div class="card">
+    <h3>SEMÁFORO DA SAÚDE — clique:</h3>
+    <div class="semaphore" id="semaphore">
+      <button class="semaphore-btn green" data-color="green">VERDE</button>
+      <button class="semaphore-btn yellow" data-color="yellow">AMARELO</button>
+      <button class="semaphore-btn orange" data-color="orange">LARANJA</button>
+      <button class="semaphore-btn red" data-color="red">VERMELHO</button>
+    </div>
+    <div id="semaphoreContent" class="semaphore-content"></div>
+  </div>
+
+  <div class="boss-warning">
+    <h4>⚠ BOSS WARNING</h4>
+    <p>Sinais de alarme: fadiga crônica, frio constante, lesões repetidas, amenorreia, queda de libido, gripes frequentes. Procure ajuda profissional.</p>
+  </div>
+</section>
+
+<!-- ===================== FASE 3 ===================== -->
+<section class="section" id="composicao">
+  <div class="section-header">
+    <div class="phase-num">FASE 3</div>
+    <h2 class="section-title">O Jogo da Composição Corporal</h2>
+    <p class="section-desc">
+      Customizando o avatar: emagrecer ou ganhar massa não é mágica.
+      É <strong>termodinâmica</strong> — calorias que entram vs. calorias que saem.
+      O resto é estratégia.
+    </p>
+  </div>
+
+  <div style="max-width:500px;margin:0 auto 24px;border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+    <img src="https://avatar-fuel-forge.lovable.app/assets/character-select-hgoMZqo-.jpg" alt="Tela de seleção de personagem mostrando físico atlético" style="width:100%;display:block" loading="lazy" />
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="card" style="text-align:center;border-color:var(--hp)">
+      <div class="card-icon" style="font-size:40px">🍽</div>
+      <h3 style="color:var(--hp)">CALORIAS IN</h3>
+    </div>
+    <div class="card" style="text-align:center;border-color:var(--power)">
+      <div class="card-icon" style="font-size:40px">🔥</div>
+      <h3 style="color:var(--power)">CALORIAS OUT</h3>
+    </div>
+  </div>
+
+  <div class="card card-glow">
+    <h3>⚖ A FÓRMULA SECRETA</h3>
+    <p style="text-align:center;font-family:'Press Start 2P',monospace;font-size:12px;color:var(--gold);margin:12px 0">
+      Mais entra que sai → ganho. Mais sai que entra → perda. Resto = ruído.
+    </p>
+    <p><strong>📚 Termodinâmica do corpo:</strong> a 1ª Lei diz que energia não some — só muda de forma. As calorias da comida viram movimento, calor ou estoque (gordura/glicogênio).</p>
+    <p>Seu gasto total (TDEE) é a soma de: <strong>TMB</strong> (~60–70%, manter o corpo vivo) + <strong>NEAT</strong> (atividades do dia, ~15%) + <strong>TEF</strong> (digestão, ~10%) + <strong>EAT</strong> (treino formal, 5–15%).</p>
+    <div class="formula-box">⚡ <strong>1 kg de gordura ≈ 7 700 kcal</strong>. Para perder 0,5 kg/semana, déficit de ~550 kcal/dia.</div>
+  </div>
+
+  <div class="card card-xp">
+    <div class="card-icon">🧱</div>
+    <h3>PROTEÍNA = TIJOLO CONSTRUTOR</h3>
+    <ul>
+      <li><strong>1,6–2,2 g/kg</strong> de peso ao dia para atletas</li>
+      <li>Efeito térmico altíssimo: até <strong>~30%</strong> queimam só pra ser digerida</li>
+      <li>Saciedade campeã — segura a fome em dietas</li>
+      <li>Distribua em 3–5 refeições para uso máximo</li>
+    </ul>
+  </div>
+
+  <h3 style="font-family:'Press Start 2P',monospace;font-size:11px;margin:24px 0 16px;color:var(--gold)">▼ ESCOLHA SUA ESTRATÉGIA DE JOGO</h3>
+
+  <div class="strategy-grid">
+    <div class="strategy-card">
+      <div class="icon">📉</div>
+      <h3>Déficit Calórico</h3>
+      <div class="difficulty">★★★★★ DIFICULDADE</div>
+      <div class="desc">Comer entre 300 e 500 kcal a menos do que se gasta por dia. Em ~30 dias = 1–2 kg de gordura perdidos. Use proteína alta (≥1,8 g/kg) para não perder músculo.</div>
+      <div class="pros-cons">
+        <h4 style="color:var(--xp)">PROS</h4>
+        <ul class="pros">
+          <li>Simples e direto</li>
+          <li>Funciona com qualquer estilo de dieta</li>
+          <li>Resultado mensurável</li>
+        </ul>
+        <h4 style="color:var(--hp);margin-top:8px">CONTRAS</h4>
+        <ul class="cons">
+          <li>Exige consistência por semanas</li>
+          <li>Fome se mal planejado</li>
+          <li>Cortes agressivos detonam performance</li>
+        </ul>
+      </div>
+      <div class="expand-hint">▼</div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="icon">⏱</div>
+      <h3>Jejum Intermitente</h3>
+      <div class="difficulty">★★★★★ DIFICULDADE</div>
+      <div class="desc">Concentrar todas as refeições em uma janela curta (ex.: 16h em jejum / 8h comendo). Não é mágica — só ajuda a comer menos no total. Nas primeiras horas o corpo usa glicogênio; depois aumenta a queima de gordura e a sensibilidade à insulina melhora. Não é indicado antes de treinos pesados de força.</div>
+      <div class="pros-cons">
+        <h4 style="color:var(--xp)">PROS</h4>
+        <ul class="pros">
+          <li>Menos refeições para controlar</li>
+          <li>Pode reduzir fome com o tempo</li>
+          <li>Melhora sensibilidade à insulina</li>
+        </ul>
+        <h4 style="color:var(--hp);margin-top:8px">CONTRAS</h4>
+        <ul class="cons">
+          <li>Risco de comer demais na janela</li>
+          <li>Difícil em treinos pesados / madrugada</li>
+          <li>Mulheres em ciclo podem ter desregulação hormonal</li>
+        </ul>
+      </div>
+      <div class="expand-hint">▼</div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="icon">🍗</div>
+      <h3>High-Protein</h3>
+      <div class="difficulty">★★★★★ DIFICULDADE</div>
+      <div class="desc">Subir a proteína para 2,0–2,4 g/kg/dia. Aumenta a saciedade, gasta mais calorias na digestão (efeito térmico ~25%) e protege o músculo durante o emagrecimento. Distribua em 3–5 refeições de ~0,3 g/kg.</div>
+      <div class="pros-cons">
+        <h4 style="color:var(--xp)">PROS</h4>
+        <ul class="pros">
+          <li>Saciedade alta, controla a fome</li>
+          <li>Preserva massa magra no cutting</li>
+          <li>Mais 'queima' na digestão</li>
+        </ul>
+        <h4 style="color:var(--hp);margin-top:8px">CONTRAS</h4>
+        <ul class="cons">
+          <li>Custo financeiro maior</li>
+          <li>Atenção à variedade e fibras</li>
+          <li>Sem treino de força, vira só caloria extra</li>
+        </ul>
+      </div>
+      <div class="expand-hint">▼</div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="icon">🔄</div>
+      <h3>Recomposição</h3>
+      <div class="difficulty">★★★★★ DIFICULDADE</div>
+      <div class="desc">Ganhar músculo E perder gordura ao mesmo tempo. Funciona melhor em iniciantes, retornados ou quem está acima do peso. Receita: déficit pequeno (~10%), proteína alta (2,0–2,2 g/kg), treino de força progressivo e sono de 7–9h. É lenta — pense em meses.</div>
+      <div class="pros-cons">
+        <h4 style="color:var(--xp)">PROS</h4>
+        <ul class="pros">
+          <li>Ganha músculo + perde gordura</li>
+          <li>Ótima para iniciantes / retorno</li>
+          <li>Mantém saúde e performance</li>
+        </ul>
+        <h4 style="color:var(--hp);margin-top:8px">CONTRAS</h4>
+        <ul class="cons">
+          <li>Lenta — meses para resultado claro</li>
+          <li>Exige treino de força sério</li>
+          <li>Inviável para atleta experiente magro</li>
+        </ul>
+      </div>
+      <div class="expand-hint">▼</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>⏱ O METABOLISMO DURANTE O JEJUM</h3>
+    <p>Quando você para de comer, o corpo segue uma sequência de quests para continuar funcionando:</p>
+    <div class="timeline">
+      <div class="timeline-item"><span class="time">0–4h</span><span class="desc">queima a glicose que sobrou da última refeição. Insulina cai.</span></div>
+      <div class="timeline-item"><span class="time">4–12h</span><span class="desc">usa o <strong>glicogênio</strong> do fígado (estoque de carbo). Energia ainda fácil.</span></div>
+      <div class="timeline-item"><span class="time">12–18h</span><span class="desc">glicogênio acaba. O corpo aumenta a <strong>lipólise</strong> (quebra de gordura) e produz <strong>corpos cetônicos</strong>. Cresce o GH (hormônio do crescimento).</span></div>
+      <div class="timeline-item"><span class="time">18–24h+</span><span class="desc">ativa <strong>autofagia</strong> (reciclagem de células velhas) e melhora a sensibilidade à insulina.</span></div>
+      <div class="timeline-item"><span class="time">&gt; 24–48h sem proteína</span><span class="desc">começa a quebrar músculo (gliconeogênese). Aqui jejum vira sabotagem.</span></div>
+    </div>
+  </div>
+
+  <div class="card card-glow">
+    <div class="card-icon">🔄</div>
+    <h3>RECOMPOSIÇÃO — A QUEST PARALELA</h3>
+    <p>É possível ganhar músculo e perder gordura ao mesmo tempo? Sim — mas só se 4 condições forem cumpridas juntas:</p>
+    <ul>
+      <li><strong>Déficit pequeno</strong> (5–15% do gasto, não mais).</li>
+      <li><strong>Proteína alta</strong> (2,0–2,4 g/kg).</li>
+      <li><strong>Treino de força</strong> com carga progressiva 3–5×/sem.</li>
+      <li><strong>Sono 7–9h</strong> e estresse controlado.</li>
+    </ul>
+    <p style="margin-top:12px">Funciona melhor em <strong>iniciantes, quem retornou após pausa</strong> e pessoas acima do peso. Atleta avançado magro provavelmente precisa alternar fases de bulking e cutting.</p>
+  </div>
+</section>
+
+<!-- ===================== FASE 4 ===================== -->
+<section class="section" id="hidratacao">
+  <div class="section-header">
+    <div class="phase-num">FASE 4</div>
+    <h2 class="section-title">Sistema de Resfriamento</h2>
+    <p class="section-desc">
+      Seu corpo é um motor turbinado. Quando esquenta demais, o radiador (suor)
+      entra em ação. Mas o suor não é só água — é a perda das suas <strong>Moedas Vitais</strong>.
+    </p>
+  </div>
+
+  <div style="max-width:400px;margin:0 auto 24px;border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+    <img src="https://avatar-fuel-forge.lovable.app/assets/hydration-engine-CZvJQj6P.png" alt="Motor superaquecendo com termômetro e moedas de água/sódio" style="width:100%;display:block" loading="lazy" />
+  </div>
+
+  <div class="formula-box">TEMP. CORPORAL ≈ 37°C</div>
+
+  <div class="card card-hp">
+    <div class="card-icon">💧</div>
+    <h3>MOEDA AZUL — Água</h3>
+    <p>Suficiente para treinos curtos (até <strong>60 min</strong>) em clima ameno.</p>
+    <div class="formula-box" style="font-size:10px">~500 ml/hora</div>
+  </div>
+
+  <div class="card card-glow">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+      <div class="card-icon" style="margin:0">💧+🧂</div>
+      <div><h3 style="margin:0">MOEDA AZUL + BRANCA</h3></div>
+    </div>
+    <p>Para treinos <strong>&gt;60–90 min</strong>, calor ou alta sudorese: isotônico com sódio + carboidrato.</p>
+    <div class="formula-box" style="font-size:10px">300–700 mg sódio/L</div>
+  </div>
+
+  <div class="card">
+    <h3>🌡 RÉGUA DE RISCO</h3>
+    <div class="regua">
+      <div class="regua-segment ok">OK</div>
+      <div class="regua-segment leve">Leve</div>
+      <div class="regua-segment severa">Severa</div>
+      <div class="regua-segment hipertermia">Hipertermia</div>
+    </div>
+    <p>Perdeu <strong>2% do peso</strong>? Performance já cai. <strong>&gt;5%?</strong> Risco de golpe de calor.</p>
+  </div>
+
+  <div class="cheat-code">
+    <span class="badge">🎯 CHEAT CODE</span>
+    <p>Pese-se antes e depois do treino. Cada <strong>1 kg perdido = 1 a 1,5 L</strong> a repor nas próximas horas.</p>
+  </div>
+
+  <div class="card card-glow">
+    <h3>⚡ Os 5 eletrólitos essenciais do atleta</h3>
+    <p>Eletrólitos são minerais com carga elétrica dissolvidos no sangue e nas células. Eles fazem o impulso nervoso passar, o músculo contrair e o equilíbrio de água acontecer. No suor, você perde principalmente sódio, mas todos importam.</p>
+    <div class="electrolyte-grid">
+      <div class="card" style="margin:0">
+        <div class="card-icon">🧂</div>
+        <h4>Sódio Na⁺</h4>
+        <p style="font-size:12px">Retém água no sangue, regula pressão e disparo nervoso.</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px"><strong style="color:var(--text)">FONTES:</strong> Sal de cozinha, isotônicos, queijos, azeitona, picles.</p>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="card-icon">🍌</div>
+        <h4>Potássio K⁺</h4>
+        <p style="font-size:12px">Contração muscular e batimento cardíaco regular.</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px"><strong style="color:var(--text)">FONTES:</strong> Banana, batata, feijão, abacate, água de coco.</p>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="card-icon">🌊</div>
+        <h4>Cloreto Cl⁻</h4>
+        <p style="font-size:12px">Anda junto com o sódio, mantém o pH e o suco gástrico.</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px"><strong style="color:var(--text)">FONTES:</strong> Sal de cozinha, frutos do mar, algas.</p>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="card-icon">🌰</div>
+        <h4>Magnésio Mg²⁺</h4>
+        <p style="font-size:12px">Relaxa músculo, ajuda no sono e na produção de energia (ATP).</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px"><strong style="color:var(--text)">FONTES:</strong> Castanhas, sementes, folhas verdes escuras, cacau.</p>
+      </div>
+      <div class="card" style="margin:0">
+        <div class="card-icon">🥛</div>
+        <h4>Cálcio Ca²⁺</h4>
+        <p style="font-size:12px">Contração muscular, ossos fortes, coagulação.</p>
+        <p style="font-size:11px;color:var(--text-muted);margin-top:6px"><strong style="color:var(--text)">FONTES:</strong> Leite, iogurte, queijo, sardinha, brócolis, tofu.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="boss-warning">
+    <h4>⚠ HIPONATREMIA</h4>
+    <p>Beber MUITA água sem repor sódio em treinos longos (&gt; 2h) pode diluir o sódio do sangue e causar náusea, confusão, convulsões. Por isso isotônico existe — não é firula de marketing.</p>
+  </div>
+</section>
+
+<!-- ===================== FASE 5 ===================== -->
+<section class="section" id="powerups">
+  <div class="section-header">
+    <div class="phase-num">FASE 5</div>
+    <h2 class="section-title">Arsenal de Power-Ups</h2>
+    <p class="section-desc">
+      Inventário oficial. Apenas itens <strong>Nível A</strong> — os 4 suplementos
+      com evidência científica forte para performance.
+    </p>
+  </div>
+
+  <div class="powerup-grid">
+    <div class="powerup-card">
+      <span class="rarity epic">ÉPICO</span>
+      <div class="icon">☕</div>
+      <h3>Poção do Foco</h3>
+      <div class="subtitle">Cafeína</div>
+      <div class="effect-label">EFEITO</div>
+      <p>Retarda a fadiga, aumenta alerta, foco e reação.</p>
+      <div class="effect-label" style="margin-top:10px">COMO FUNCIONA</div>
+      <p>A cafeína bloqueia a adenosina — o neurotransmissor que faz você sentir cansaço. Resultado: o cérebro 'não recebe' o aviso de fadiga e libera mais dopamina e adrenalina. Pico em 30–60 min, meia-vida de ~5h (por isso evitar à noite).</p>
+      <div class="detail-row"><span class="label">DOSE</span><span class="value">3–6 mg/kg, 30–60 min antes do treino</span></div>
+      <div class="detail-row"><span class="label">EFEITOS COLATERAIS</span><span class="value">Insônia, taquicardia, ansiedade em doses altas</span></div>
+    </div>
+
+    <div class="powerup-card">
+      <span class="rarity legendary">LENDÁRIO</span>
+      <div class="icon">💎</div>
+      <h3>Cristal da Força</h3>
+      <div class="subtitle">Creatina</div>
+      <div class="effect-label">EFEITO</div>
+      <p>Mais explosão, força e ganho de massa magra.</p>
+      <div class="effect-label" style="margin-top:10px">COMO FUNCIONA</div>
+      <p>Aumenta o estoque de fosfocreatina nos músculos, que recicla ATP (a moeda de energia) em esforços curtos e intensos. Resultado: mais 1–2 reps no final da série, mais volume de treino, mais hipertrofia ao longo de semanas.</p>
+      <div class="detail-row"><span class="label">DOSE</span><span class="value">3–5 g/dia, todo dia (monoidratada)</span></div>
+      <div class="detail-row"><span class="label">EFEITOS COLATERAIS</span><span class="value">Leve retenção de água — esperada e benéfica</span></div>
+    </div>
+
+    <div class="powerup-card">
+      <span class="rarity rare">RARO</span>
+      <div class="icon">🧯</div>
+      <h3>Extintor de Ácido</h3>
+      <div class="subtitle">Bicarbonato / β-Alanina</div>
+      <div class="effect-label">EFEITO</div>
+      <p>Apaga a queimação muscular em sprints e esforços de 1–7 min.</p>
+      <div class="effect-label" style="margin-top:10px">COMO FUNCIONA</div>
+      <p>O esforço intenso produz íons H+ que acidificam o músculo (a 'queimação'). Bicarbonato neutraliza essa acidez no sangue; β-alanina aumenta a carnosina dentro da célula, que faz o mesmo trabalho local.</p>
+      <div class="detail-row"><span class="label">DOSE</span><span class="value">0,3 g/kg bicarbonato 60–90 min antes</span></div>
+      <div class="detail-row"><span class="label">EFEITOS COLATERAIS</span><span class="value">Desconforto gástrico — teste em treino</span></div>
+    </div>
+
+    <div class="powerup-card">
+      <span class="rarity rare">RARO</span>
+      <div class="icon">🥤</div>
+      <h3>Suco Mágico</h3>
+      <div class="subtitle">Nitrato (Beterraba)</div>
+      <div class="effect-label">EFEITO</div>
+      <p>Vasodilata, melhora uso de O₂ e economia de energia.</p>
+      <div class="effect-label" style="margin-top:10px">COMO FUNCIONA</div>
+      <p>O nitrato vira óxido nítrico no corpo, relaxa as veias e aumenta o fluxo sanguíneo para o músculo — entrega mais O₂ por batida do coração. Útil para corrida, ciclismo e endurance em geral.</p>
+      <div class="detail-row"><span class="label">DOSE</span><span class="value">~500 ml suco concentrado, 2–3 h antes</span></div>
+      <div class="detail-row"><span class="label">EFEITOS COLATERAIS</span><span class="value">Urina avermelhada (sem perigo)</span></div>
+    </div>
+  </div>
+
+  <div class="card card-glow">
+    <div class="card-icon">☕</div>
+    <h3>Tudo sobre a cafeína</h3>
+    <p>É o ergogênico mais estudado do mundo. Funciona em quase todo tipo de esporte: força, sprint, endurance e até em provas mentais.</p>
+    <ul>
+      <li><strong>Mecanismo:</strong> bloqueia receptores de adenosina no cérebro → menos sono, menos percepção de esforço.</li>
+      <li><strong>Dose efetiva:</strong> 3–6 mg/kg (60 kg → 180–360 mg). Acima de 9 mg/kg = mais efeito colateral, sem mais ganho.</li>
+      <li><strong>Quando tomar:</strong> 30–60 min antes do treino. Em provas longas, doses pequenas a cada 1h.</li>
+      <li><strong>Cuidado com o sono:</strong> meia-vida de ~5h. Evite após 14–16h se treina à tarde.</li>
+      <li><strong>Tolerância:</strong> uso diário reduz o efeito. Cicle (ex.: usar só nos treinos pesados).</li>
+      <li><strong>Fontes:</strong> café (~80–120 mg/xícara), cápsula anidra, energético, pré-treino.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>💥 O que é um "pré-treino"?</h3>
+    <p>Pré-treino é uma <strong>mistura</strong>: vários suplementos no mesmo pó. Não tem nada de mágico — é a soma de itens que já existem separados. Bons pré-treinos costumam ter:</p>
+    <ul>
+      <li><strong>Cafeína</strong> (150–300 mg) — foco e energia.</li>
+      <li><strong>β-alanina</strong> (2–5 g) — adia a queimação. Causa formigamento (parestesia), normal.</li>
+      <li><strong>Citrulina malato</strong> (6–8 g) — "pump", vasodilatação.</li>
+      <li><strong>Creatina</strong> (3–5 g) — força (mas funciona melhor diariamente, não só pré-treino).</li>
+      <li><strong>Tirosina, taurina, eletrólitos</strong> — auxiliares.</li>
+    </ul>
+    <p style="margin-top:12px;color:var(--gold)">⚠ Cuidado com fórmulas <strong>"proprietary blend"</strong> que escondem doses, e com pré-treinos cheios de estimulantes obscuros (DMAA, DMHA) — risco de doping e de saúde.</p>
+  </div>
+
+  <div style="max-width:400px;margin:20px auto;border-radius:12px;overflow:hidden;border:1px solid var(--border)">
+    <img src="https://avatar-fuel-forge.lovable.app/assets/doping-boss-Ds7Fxdu7.png" alt="Caveira de boss representando doping acidental" style="width:100%;display:block" loading="lazy" />
+  </div>
+
+  <div class="danger-zone">
+    <h3>⚠ ZONA DE PERIGO — O CHEFÃO DO DOPING</h3>
+    <p>Suplementos sem certificação podem estar <strong>contaminados</strong> com substâncias proibidas pela WADA. Um único frasco errado pode dar <strong>GAME OVER</strong> na carreira de um atleta: suspensão, perda de medalhas, fim de patrocínio.</p>
+    <ul>
+      <li>Compre apenas marcas com selos <strong>Informed Sport</strong> ou <strong>NSF Certified for Sport</strong></li>
+      <li>Desconfie de promessas mágicas ("ganhe 10 kg em 1 mês")</li>
+      <li>Hormônios e pró-hormônios = doping mesmo sem rótulo dizer</li>
+      <li>A responsabilidade pelo teste positivo é <strong>sempre do atleta</strong></li>
+    </ul>
+    <p style="text-align:center;margin-top:12px;font-family:'Press Start 2P',monospace;font-size:10px;color:var(--red)">💀 NÃO ARRISQUE SEU AVATAR</p>
+  </div>
+</section>
+
+<!-- ===================== DAILY QUEST ===================== -->
+<section class="section" id="dailyquest">
+  <div class="section-header">
+    <div class="phase-num">MISSÃO DIÁRIA</div>
+    <h2 class="section-title">Sua Daily Quest</h2>
+    <p class="section-desc">
+      Marque cada conquista do dia. Seu progresso fica salvo no seu navegador
+      até a próxima visita — zera automaticamente a cada novo dia e vai para o
+      seu histórico de XP.
+    </p>
+  </div>
+
+  <div class="quest-container">
+    <div class="quest-header">
+      <span class="quest-xp">XP DA QUEST: <span id="questProgressText">0</span>/6 • <span id="questPercent">0</span>%</span>
+    </div>
+    <div class="quest-progress">
+      <div class="quest-progress-fill" id="questFill" style="width:0%"></div>
+    </div>
+
+    <div id="questList"></div>
+
+    <div class="quest-footer">
+      <span class="quest-date">💾 SALVO LOCALMENTE • <span id="questDate"></span></span>
+      <div class="quest-btns">
+        <button class="quest-btn" onclick="resetDailyQuest()">ZERAR DIA</button>
+        <button class="quest-btn" onclick="saveDailyCheckpoint()">SAVE FILE</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="history-container">
+    <h3 style="font-family:'Press Start 2P',monospace;font-size:11px;margin-bottom:12px">Histórico de XP</h3>
+    <div class="history-tabs">
+      <button class="history-tab active" data-period="7" onclick="switchHistory(7,this)">7 DIAS</button>
+      <button class="history-tab" data-period="30" onclick="switchHistory(30,this)">30 DIAS</button>
+    </div>
+    <div class="history-chart" id="historyChart"></div>
+    <div class="history-stats">
+      <div class="history-stat"><span class="value" id="totalXp">0</span><span class="label">XP TOTAL</span></div>
+      <div class="history-stat"><span class="value" id="totalItems">0</span><span class="label">ITENS</span></div>
+      <div class="history-stat"><span class="value" id="perfectDays">0</span><span class="label">DIAS PERFEITOS</span></div>
+      <div class="history-stat"><span class="value" id="streak">0d</span><span class="label">STREAK 🔥</span></div>
+    </div>
+    <p style="text-align:center;margin-top:12px;font-size:11px;color:var(--text-muted)" id="avgText">Média de 0 XP por dia ativo (0/0 dias).</p>
+    <div style="text-align:center;margin-top:12px">
+      <button class="quest-btn" onclick="clearHistory()">LIMPAR HISTÓRICO</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FINAL ===================== -->
+<section class="section" id="final">
+  <div class="phase-num" style="text-align:center">FIM DA FASE 1 ✦ NÍVEL DESBLOQUEADO</div>
+  <h2 class="section-title" style="text-align:center">
+    Cada avatar é único.<br/>Não existe build universal.
+  </h2>
+  <p style="text-align:center;max-width:600px;margin:16px auto;color:var(--text-muted);font-size:14px">
+    Genética, rotina, modalidade, objetivo — tudo muda a estratégia. Tratar nutrição
+    como "receita de bolo" da internet é o caminho mais rápido para o Game Over.
+    A próxima missão é encontrar quem te guia.
+  </p>
+  <div style="text-align:center;margin:20px 0">
+    <a href="#" class="hero-nav a primary" style="display:inline-flex;font-family:'Press Start 2P',monospace;font-size:10px;padding:12px 24px;border:2px solid var(--hp);border-radius:8px;color:var(--hp);text-decoration:none;background:rgba(255,71,87,0.05)">
+      🎯 PROCURE SEU MESTRE NUTRICIONISTA
+    </a>
+  </div>
+
+  <div style="text-align:center;margin-top:40px">
+    <h3 style="font-family:'Press Start 2P',monospace;font-size:10px;color:var(--gold);margin-bottom:8px">📚 GRIMÓRIO CIENTÍFICO</h3>
+    <p style="font-size:12px;color:var(--text-muted)">Ver referências usadas</p>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <p>⚠ Conteúdo educativo. Não substitui consulta com nutricionista, médico ou treinador.</p>
+  <p style="margin-top:8px">© 2026 NUTRIQUEST · PRESS START TO LIVE BETTER</p>
+  <p class="disclaimer">© 2026 NutriQuest. Todos os direitos reservados. Este site fornece informações educativas sobre nutrição esportiva. Consulte sempre um profissional de saúde antes de iniciar qualquer dieta ou programa de exercícios.</p>
+</footer>
+
+<div class="notification" id="notification"></div>
+
+<script>
+// ==================== DAILY QUEST DATA ====================
+const QUEST_ITEMS = [
+  { id: 'treino', icon: '🏋️', label: 'TREINO DO DIA', sub: 'Fiz minha sessão (força, cárdio ou mobilidade)' },
+  { id: 'agua', icon: '💧', label: 'ÁGUA', sub: 'Bati minha meta de água hoje' },
+  { id: 'proteina', icon: '🥩', label: 'PROTEÍNA', sub: 'Comi proteína em todas as refeições principais' },
+  { id: 'frutas', icon: '🍎', label: 'FRUTAS', sub: 'Consumi frutas hoje' },
+  { id: 'verduras', icon: '🥦', label: 'VERDURAS / LEGUMES', sub: 'Comi salada, verduras ou legumes hoje' },
+  { id: 'sono', icon: '😴', label: 'SONO', sub: 'Dormi entre 7 e 9 horas na noite anterior' }
+];
+
+const STORAGE_KEY = 'nutriquest:daily';
+const XP_KEY = 'nutriquest:xphistory';
+
+function getToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function loadDaily() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch { return null; }
+}
+
+function saveDaily(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadHistory() {
+  try {
+    const raw = localStorage.getItem(XP_KEY);
+    if (!raw) return {};
+    return JSON.parse(raw);
+  } catch { return {}; }
+}
+
+function saveHistory(h) {
+  localStorage.setItem(XP_KEY, JSON.stringify(h));
+}
+
+// ==================== RENDER DAILY QUEST ====================
+function renderQuest() {
+  const today = getToday();
+  let data = loadDaily();
+  
+  if (!data || data.date !== today) {
+    data = { date: today, done: [] };
+    saveDaily(data);
+  }
+
+  const list = document.getElementById('questList');
+  list.innerHTML = '';
+  
+  let doneCount = 0;
+  QUEST_ITEMS.forEach(item => {
+    const isDone = data.done.includes(item.id);
+    if (isDone) doneCount++;
+    
+    const div = document.createElement('div');
+    div.className = 'quest-item' + (isDone ? ' done' : '');
+    div.onclick = function() { toggleQuest(item.id); };
+    
+    div.innerHTML = `
+      <div class="quest-check">${isDone ? '✓' : ''}</div>
+      <span class="quest-icon">${item.icon}</span>
+      <div class="quest-text">
+        ${item.label}
+        <span class="sub">${item.sub}</span>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+
+  const percent = Math.round((doneCount / QUEST_ITEMS.length) * 100);
+  document.getElementById('questProgressText').textContent = doneCount;
+  document.getElementById('questPercent').textContent = percent;
+  document.getElementById('questFill').style.width = percent + '%';
+  document.getElementById('questDate').textContent = today;
+  
+  updateHUD(doneCount);
+}
+
+function toggleQuest(id) {
+  const data = loadDaily();
+  if (!data) return;
+  
+  const idx = data.done.indexOf(id);
+  if (idx > -1) {
+    data.done.splice(idx, 1);
+  } else {
+    data.done.push(id);
+  }
+  
+  saveDaily(data);
+  renderQuest();
+  updateHistory();
+  renderHistory();
+}
+
+function resetDailyQuest() {
+  if (!confirm('Zerar o dia atual? Todo progresso de hoje será perdido.')) return;
+  const today = getToday();
+  const data = { date: today, done: [] };
+  saveDaily(data);
+  renderQuest();
+  updateHistory();
+  renderHistory();
+  showNotification('Dia zerado!');
+}
+
+function saveDailyCheckpoint() {
+  showNotification('💾 Progresso salvo!');
+}
+
+// ==================== HUD ====================
+function updateHUD(doneCount) {
+  const hp = Math.max(20, 100 - (doneCount * 5));
+  document.getElementById('hpFill').style.width = hp + '%';
+  document.getElementById('hpText').textContent = hp;
+  
+  const xp = doneCount * 15;
+  document.getElementById('xpFill').style.width = Math.min(100, (xp / 100) * 100) + '%';
+  document.getElementById('xpText').textContent = xp;
+}
+
+// ==================== XP HISTORY ====================
+function updateHistory() {
+  const today = getToday();
+  const data = loadDaily();
+  const history = loadHistory();
+  
+  if (data && data.date === today) {
+    history[today] = data.done.length;
+    // Clean up old entries (keep last 60 days)
+    const dates = Object.keys(history).sort();
+    while (dates.length > 60) {
+      const old = dates.shift();
+      delete history[old];
+    }
+    saveHistory(history);
+  }
+}
+
+function renderHistory(period) {
+  period = period || 7;
+  const history = loadHistory();
+  const today = new Date();
+  const dates = [];
+  
+  for (let i = period - 1; i >= 0; i--) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    const shortLabel = String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0');
+    const xp = history[key] || 0;
+    dates.push({ key, label: shortLabel, xp });
+  }
+  
+  const chart = document.getElementById('historyChart');
+  chart.innerHTML = '';
+  
+  const maxXp = Math.max(1, ...dates.map(d => d.xp));
+  
+  dates.forEach(d => {
+    const bar = document.createElement('div');
+    bar.className = 'chart-bar';
+    const height = Math.max(4, (d.xp / maxXp) * 100);
+    bar.style.height = height + 'px';
+    bar.innerHTML = `
+      <span class="bar-value">${d.xp} XP</span>
+      <span class="bar-label">${d.label}</span>
+    `;
+    if (d.xp === 0) {
+      bar.style.background = 'linear-gradient(180deg, var(--text-muted), transparent)';
+      bar.style.opacity = '0.3';
+    }
+    chart.appendChild(bar);
+  });
+  
+  // Calculate stats
+  const xpValues = dates.map(d => d.xp);
+  const totalXp = xpValues.reduce((a, b) => a + b, 0);
+  const totalItems = totalXp / 15; // each daily item = 15xp
+  const perfectDays = xpValues.filter(v => v >= 6).length; // 6 items = perfect
+  const activeDays = xpValues.filter(v => v > 0).length;
+  
+  // Streak
+  let streak = 0;
+  for (let i = dates.length - 1; i >= 0; i--) {
+    if (dates[i].xp > 0) streak++;
+    else break;
+  }
+  
+  document.getElementById('totalXp').textContent = totalXp;
+  document.getElementById('totalItems').textContent = totalItems;
+  document.getElementById('perfectDays').textContent = perfectDays;
+  document.getElementById('streak').textContent = streak + 'd';
+  document.getElementById('avgText').textContent = `Média de ${activeDays > 0 ? Math.round(totalXp / activeDays) : 0} XP por dia ativo (${activeDays}/${period} dias).`;
+}
+
+function switchHistory(period, btn) {
+  document.querySelectorAll('.history-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderHistory(period);
+}
+
+function clearHistory() {
+  if (!confirm('Limpar todo o histórico de XP?')) return;
+  saveHistory({});
+  renderHistory(7);
+  showNotification('Histórico limpo!');
+}
+
+// ==================== SEMAPHORE ====================
+const SEMAPHORE_DATA = {
+  green: {
+    title: 'VERDE — Bateria 100%',
+    content: `Energia ótima. Hormônios ativos, ossos fortes, performance máxima.
+Aqui o corpo tem combustível suficiente para o treino E para todas as funções vitais. Você come o que gasta com folga, então a recuperação é rápida, o sono profundo, o humor estável e os ganhos de força/hipertrofia acontecem. É a zona ideal para qualquer atleta.`,
+    items: [
+      'Recuperação muscular eficiente em 24–48h',
+      'Sistema imune funcionando — menos gripes',
+      'Densidade óssea preservada (menos risco de fratura)',
+      'Foco, libido e humor estáveis',
+      'Tireoide e hormônios sexuais em níveis normais'
+    ]
+  },
+  yellow: {
+    title: 'AMARELO — Atenção',
+    content: 'Energia disponível começando a ficar baixa. O corpo ainda funciona, mas alguns sinais de alerta podem aparecer: recuperação mais lenta, queda discreta de performance, alterações de humor. É hora de revisar a ingestão calórica antes que o quadro se agrave.',
+    items: [
+      'Recuperação muscular um pouco mais lenta',
+      'Pequena queda de performance',
+      'Foco e disposição começam a oscilar',
+      'Sono pode não ser tão reparador'
+    ]
+  },
+  orange: {
+    title: 'LARANJA — Modo Crítico',
+    content: 'A energia disponível está baixa o suficiente para começar a afetar funções hormonais. A tireoide reduz a atividade, hormônios sexuais começam a cair, a densidade óssea pode ser comprometida e a imunidade fica prejudicada. O risco de lesões aumenta significativamente.',
+    items: [
+      'Queda hormonal significativa',
+      'Imunidade comprometida',
+      'Risco elevado de lesões',
+      'Recuperação muito lenta',
+      'Fadiga persistente'
+    ]
+  },
+  red: {
+    title: 'VERMELHO — PERIGO — REDs',
+    content: 'Síndrome REDs instalada. O corpo está em modo de sobrevivência: funções reprodutivas desligadas, ossos perdendo densidade, tireoide hipoativa, sistema imune deprimido. A performance despencou e a saúde está em risco. Necessário acompanhamento profissional urgente.',
+    items: [
+      'Amenorreia (em mulheres) / baixa libido (homens)',
+      'Osteopenia / risco de fratura por estresse',
+      'Supressão da tireoide',
+      'Sistema imune deprimido — infecções frequentes',
+      'Fadiga crônica e depressão',
+      'Performance severamente comprometida'
+    ]
+  }
+};
+
+let semaphoreActive = null;
+
+function initSemaphore() {
+  const btns = document.querySelectorAll('.semaphore-btn');
+  const content = document.getElementById('semaphoreContent');
+  
+  btns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const color = this.dataset.color;
+      
+      btns.forEach(b => b.classList.remove('active'));
+      
+      if (semaphoreActive === color) {
+        semaphoreActive = null;
+        content.classList.remove('active');
+        content.innerHTML = '';
+        return;
+      }
+      
+      this.classList.add('active');
+      semaphoreActive = color;
+      
+      const data = SEMAPHORE_DATA[color];
+      let html = `<h4 style="font-family:'Press Start 2P',monospace;font-size:10px;margin-bottom:8px">${data.title}</h4>`;
+      html += `<p style="margin-bottom:12px">${data.content}</p><ul>`;
+      data.items.forEach(item => {
+        html += `<li>${item}</li>`;
+      });
+      html += '</ul>';
+      content.innerHTML = html;
+      content.classList.add('active');
+    });
+  });
+}
+
+// ==================== STRATEGY CARDS ====================
+function initStrategyCards() {
+  var grid = document.querySelector('.strategy-grid');
+  if (!grid) return;
+  var cards = [];
+  for (var i = 0; i < grid.children.length; i++) {
+    if (grid.children[i].classList.contains('strategy-card')) {
+      cards.push(grid.children[i]);
+    }
+  }
+  var maxH = 0;
+  cards.forEach(function(c) {
+    var h = c.offsetHeight;
+    if (h > maxH) maxH = h;
+  });
+  cards.forEach(function(c) {
+    c.style.minHeight = maxH + 'px';
+  });
+  grid.addEventListener('click', function(e) {
+    var card = e.target.closest('.strategy-card');
+    if (!card) return;
+    var wasOpen = card.getAttribute('data-expanded') === 'true';
+    cards.forEach(function(c) {
+      var pc = c.querySelector('.pros-cons');
+      var eh = c.querySelector('.expand-hint');
+      if (pc) pc.style.setProperty('display', 'none', 'important');
+      if (eh) eh.style.setProperty('transform', 'rotate(0deg)', 'important');
+      c.setAttribute('data-expanded', 'false');
+    });
+    if (!wasOpen) {
+      var pc = card.querySelector('.pros-cons');
+      var eh = card.querySelector('.expand-hint');
+      if (pc) pc.style.setProperty('display', 'block', 'important');
+      if (eh) eh.style.setProperty('transform', 'rotate(180deg)', 'important');
+      card.setAttribute('data-expanded', 'true');
+    }
+  });
+}
+
+// ==================== NOTIFICATION ====================
+function showNotification(msg) {
+  const el = document.getElementById('notification');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2500);
+}
+
+// ==================== INIT ====================
+document.addEventListener('DOMContentLoaded', function() {
+  renderQuest();
+  renderHistory(7);
+  updateHistory();
+  initSemaphore();
+  initStrategyCards();
+  
+  // Update quest date display
+  const today = getToday();
+  document.getElementById('questDate').textContent = today;
+});
+</script>
+
+<script src="/assets/api.js"></script>
+<script>
+(function(){
+  const u = NQ.getUser();
+  const loginLinks = document.querySelectorAll('a[href="login.html"], a[href="/login.html"]');
+  if (u) {
+    loginLinks.forEach(a => {
+      a.textContent = '👤 ' + u.username;
+      a.href = '/minha-lista.html';
+      a.style.borderColor = 'var(--xp)';
+      a.style.color = 'var(--xp)';
+      a.style.background = 'rgba(46,213,115,0.1)';
+    });
+  }
+})();
+</script>
+</body>
+</html>

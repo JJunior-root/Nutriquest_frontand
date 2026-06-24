@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NutriQuest — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --hp:#ff4757;
+  --hp-glow:#ff6b81;
+  --xp:#2ed573;
+  --xp-glow:#7bed9f;
+  --power:#3742fa;
+  --power-glow:#5352ed;
+  --bg:#0a0a0f;
+  --bg2:#12121a;
+  --bg-card:#1a1a2e;
+  --bg-card-hover:#222240;
+  --border:#2a2a4a;
+  --text:#e8e8f0;
+  --text-muted:#8888a0;
+  --gold:#ffa502;
+  --cyan:#00d2d3;
+  --purple:#a29bfe;
+  --pink:#fd79a8;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+.font-pixel{font-family:'Press Start 2P',monospace;letter-spacing:-0.02em;line-height:1.6}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-muted)}
+
+/* ===================== GRID BG ===================== */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(55,66,250,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(55,66,250,0.04) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+.grid-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 40%, rgba(55,66,250,0.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 60%, rgba(255,71,87,0.10) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(0,210,211,0.04) 0%, transparent 60%);
+}
+
+/* ===================== LAYOUT ===================== */
+.page-wrap{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 20px;
+}
+
+/* ===================== LOGO / HEADER ===================== */
+.logo-area{
+  text-align:center;margin-bottom:36px;
+}
+.logo-icon{
+  font-size:48px;margin-bottom:12px;
+  display:block;
+  filter:drop-shadow(0 0 16px rgba(255,71,87,0.6));
+  animation:pulse-icon 3s ease-in-out infinite;
+}
+@keyframes pulse-icon{
+  0%,100%{filter:drop-shadow(0 0 16px rgba(255,71,87,0.6))}
+  50%{filter:drop-shadow(0 0 32px rgba(55,66,250,0.8))}
+}
+.logo-title{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(16px, 4vw, 22px);
+  line-height:1.5;
+}
+.logo-title .t1{color:var(--hp);text-shadow:0 0 16px var(--hp-glow)}
+.logo-title .t2{color:var(--power);text-shadow:0 0 16px var(--power-glow)}
+.logo-sub{
+  margin-top:10px;
+  font-size:11px;color:var(--text-muted);
+  font-family:'Press Start 2P',monospace;
+  letter-spacing:0.05em;
+}
+
+/* ===================== CARD ===================== */
+.login-card{
+  width:100%;max-width:440px;
+  background:var(--bg-card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:36px 32px;
+  box-shadow:
+    0 0 0 1px rgba(55,66,250,0.08),
+    0 8px 40px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+  position:relative;overflow:hidden;
+}
+.login-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, var(--hp), var(--power), var(--cyan));
+}
+
+/* corner decorations */
+.corner{
+  position:absolute;width:16px;height:16px;
+  border-color:var(--border);border-style:solid;
+}
+.corner-tl{top:8px;left:8px;border-width:1px 0 0 1px}
+.corner-tr{top:8px;right:8px;border-width:1px 1px 0 0}
+.corner-bl{bottom:8px;left:8px;border-width:0 0 1px 1px}
+.corner-br{bottom:8px;right:8px;border-width:0 1px 1px 0}
+
+/* ===================== TABS ===================== */
+.tabs{
+  display:flex;gap:0;margin-bottom:28px;
+  border:1px solid var(--border);border-radius:6px;overflow:hidden;
+}
+.tab-btn{
+  flex:1;padding:10px 0;
+  font-family:'Press Start 2P',monospace;font-size:8px;
+  background:transparent;border:none;cursor:pointer;
+  color:var(--text-muted);transition:all 0.2s;
+  position:relative;
+}
+.tab-btn.active{
+  background:rgba(55,66,250,0.15);
+  color:var(--text);
+}
+.tab-btn.active::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:var(--power);
+}
+.tab-btn:hover:not(.active){background:rgba(255,255,255,0.03);color:var(--text)}
+
+/* ===================== FORM PANEL ===================== */
+.form-panel{display:none}
+.form-panel.active{display:block}
+
+/* ===================== FIELD ===================== */
+.field{margin-bottom:20px}
+.field-label{
+  display:flex;align-items:center;gap:8px;
+  font-family:'Press Start 2P',monospace;font-size:8px;
+  color:var(--text-muted);margin-bottom:8px;
+}
+.field-label .licon{font-size:12px}
+.field-input{
+  width:100%;padding:12px 14px;
+  background:var(--bg2);
+  border:1px solid var(--border);border-radius:6px;
+  color:var(--text);font-family:'Inter',sans-serif;font-size:14px;
+  transition:all 0.2s;outline:none;
+}
+.field-input::placeholder{color:var(--text-muted)}
+.field-input:focus{
+  border-color:var(--power);
+  box-shadow:0 0 0 3px rgba(55,66,250,0.12);
+}
+.field-input.error{border-color:var(--hp);box-shadow:0 0 0 3px rgba(255,71,87,0.12)}
+
+/* password wrapper */
+.pass-wrap{position:relative}
+.pass-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;
+  color:var(--text-muted);font-size:14px;padding:4px;
+  transition:color 0.2s;
+}
+.pass-toggle:hover{color:var(--text)}
+
+/* ===================== STRENGTH BAR ===================== */
+.strength-bar{margin-top:8px}
+.strength-track{
+  height:4px;background:var(--bg);border-radius:2px;overflow:hidden;
+  display:flex;gap:3px;
+}
+.strength-seg{flex:1;border-radius:2px;background:var(--border);transition:background 0.3s}
+.strength-seg.lit-weak{background:var(--hp)}
+.strength-seg.lit-ok{background:var(--gold)}
+.strength-seg.lit-strong{background:var(--xp)}
+.strength-label{font-size:10px;color:var(--text-muted);margin-top:4px}
+
+/* ===================== EXTRAS ===================== */
+.forgot-link{
+  display:block;text-align:right;
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  color:var(--text-muted);text-decoration:none;
+  margin-top:-12px;margin-bottom:20px;
+  transition:color 0.2s;
+}
+.forgot-link:hover{color:var(--cyan)}
+
+/* ===================== SUBMIT BTN ===================== */
+.btn-submit{
+  width:100%;padding:14px;
+  font-family:'Press Start 2P',monospace;font-size:10px;
+  background:transparent;
+  border:1px solid var(--power);border-radius:6px;
+  color:var(--power);cursor:pointer;
+  transition:all 0.25s;
+  position:relative;overflow:hidden;
+  margin-bottom:20px;
+  letter-spacing:0.03em;
+}
+.btn-submit::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg, var(--power), var(--cyan));
+  opacity:0;transition:opacity 0.25s;
+}
+.btn-submit:hover::before{opacity:0.15}
+.btn-submit:hover{
+  color:var(--text);
+  box-shadow:0 0 20px rgba(55,66,250,0.35);
+  transform:translateY(-1px);
+}
+.btn-submit:active{transform:translateY(0)}
+.btn-submit span{position:relative;z-index:1}
+
+/* register variant */
+.btn-register{border-color:var(--xp);color:var(--xp)}
+.btn-register::before{background:linear-gradient(90deg, var(--xp), var(--cyan))}
+.btn-register:hover{box-shadow:0 0 20px rgba(46,213,115,0.35)}
+
+/* ===================== DIVIDER ===================== */
+.or-divider{
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+}
+.or-divider::before,.or-divider::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+.or-divider span{
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  color:var(--text-muted);white-space:nowrap;
+}
+
+/* ===================== SOCIAL BTNS ===================== */
+.social-row{display:flex;gap:10px;margin-bottom:20px}
+.social-btn{
+  flex:1;padding:10px;
+  background:var(--bg2);border:1px solid var(--border);border-radius:6px;
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  color:var(--text-muted);cursor:pointer;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.social-btn:hover{border-color:var(--text-muted);color:var(--text);background:var(--bg-card-hover)}
+.social-btn .sicon{font-size:14px}
+
+/* ===================== BOTTOM TEXT ===================== */
+.bottom-text{
+  text-align:center;
+  font-family:'Press Start 2P',monospace;font-size:7px;
+  color:var(--text-muted);
+}
+.bottom-text a{color:var(--cyan);text-decoration:none;transition:opacity 0.2s}
+.bottom-text a:hover{opacity:0.8}
+
+/* ===================== XP BADGE ===================== */
+.xp-badge{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(46,213,115,0.07);
+  border:1px solid rgba(46,213,115,0.2);
+  border-radius:6px;padding:10px 14px;margin-bottom:20px;
+}
+.xp-badge-icon{font-size:18px}
+.xp-badge-text{font-size:10px;color:var(--xp);font-family:'Press Start 2P',monospace;line-height:1.5}
+.xp-badge-text span{display:block;font-size:8px;color:var(--text-muted);margin-top:2px}
+
+/* ===================== ERROR MSG ===================== */
+.error-msg{
+  font-size:11px;color:var(--hp);
+  font-family:'Press Start 2P',monospace;
+  margin-top:6px;display:none;
+}
+.error-msg.visible{display:block}
+
+/* ===================== SUCCESS OVERLAY ===================== */
+.success-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(10,10,15,0.92);backdrop-filter:blur(6px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.4s;
+  text-align:center;padding:20px;
+}
+.success-overlay.show{opacity:1;pointer-events:all}
+.success-icon{font-size:64px;margin-bottom:20px;animation:pop 0.5s ease-out}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.15)}100%{transform:scale(1)}}
+.success-title{
+  font-family:'Press Start 2P',monospace;font-size:clamp(14px,3vw,20px);
+  color:var(--xp);text-shadow:0 0 20px var(--xp-glow);margin-bottom:10px;
+}
+.success-sub{font-size:13px;color:var(--text-muted);margin-bottom:28px}
+.success-xp{
+  font-family:'Press Start 2P',monospace;font-size:24px;
+  color:var(--gold);text-shadow:0 0 12px rgba(255,165,2,0.5);
+  margin-bottom:4px;
+}
+.success-xp-label{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--text-muted)}
+
+/* ===================== FOOTER ===================== */
+.login-footer{
+  position:relative;z-index:1;
+  text-align:center;padding:20px;
+  font-family:'Press Start 2P',monospace;font-size:7px;color:var(--text-muted);
+}
+.login-footer a{color:var(--text-muted);text-decoration:none}
+.login-footer a:hover{color:var(--text)}
+
+/* ===================== PARTICLE ===================== */
+.particle{
+  position:fixed;pointer-events:none;z-index:50;
+  font-family:'Press Start 2P',monospace;font-size:10px;
+  opacity:0;animation:float-up 1.2s ease-out forwards;
+}
+@keyframes float-up{
+  0%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-80px) scale(0.6)}
+}
+
+/* ===================== RESPONSIVE ===================== */
+@media(max-width:480px){
+  .login-card{padding:24px 18px}
+  .logo-title{font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<div class="page-wrap">
+
+  <!-- Logo -->
+  <div class="logo-area">
+    <span class="logo-icon">🎮</span>
+    <div class="logo-title">
+      <span class="t1">NUTRI</span><span class="t2">QUEST</span>
+    </div>
+    <div class="logo-sub">NUTRIÇÃO ESPORTIVA EM MODO JOGO</div>
+  </div>
+
+  <!-- Card -->
+  <div class="login-card" id="loginCard">
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-tr"></div>
+    <div class="corner corner-bl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- Tabs -->
+    <div class="tabs" role="tablist">
+      <button class="tab-btn active" id="tab-login" role="tab" onclick="switchTab('login')">▶ ENTRAR</button>
+      <button class="tab-btn" id="tab-register" role="tab" onclick="switchTab('register')">✦ CRIAR CONTA</button>
+    </div>
+
+    <!-- LOGIN PANEL -->
+    <div class="form-panel active" id="panel-login">
+      <div class="field">
+        <div class="field-label"><span class="licon">📧</span> E-MAIL</div>
+        <input type="email" id="login-email" class="field-input" placeholder="seu@email.com" autocomplete="email" />
+        <div class="error-msg" id="login-email-err">E-mail inválido</div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="licon">🔑</span> SENHA</div>
+        <div class="pass-wrap">
+          <input type="password" id="login-pass" class="field-input" placeholder="••••••••" autocomplete="current-password" />
+          <button class="pass-toggle" onclick="togglePass('login-pass', this)" aria-label="Mostrar senha">👁</button>
+        </div>
+        <div class="error-msg" id="login-pass-err">Senha incorreta</div>
+      </div>
+      <a href="#" class="forgot-link">ESQUECI A SENHA →</a>
+      <button class="btn-submit" onclick="handleLogin()"><span>▶ INICIAR SESSÃO</span></button>
+      <div class="or-divider"><span>— OU —</span></div>
+      <div class="social-row">
+        <button class="social-btn" onclick="socialLogin('Google')"><span class="sicon">🌐</span> Google</button>
+      </div>
+      <div class="bottom-text">SEM CONTA? <a href="#" onclick="switchTab('register');return false">CADASTRE-SE AQUI</a></div>
+    </div>
+
+    <!-- REGISTER PANEL -->
+    <div class="form-panel" id="panel-register">
+      <div class="xp-badge">
+        <span class="xp-badge-icon">⭐</span>
+        <div class="xp-badge-text">
+          BÔNUS DE NOVO JOGADOR
+          <span>+500 XP ao criar sua conta</span>
+        </div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="licon">🧙</span> NOME DE USUÁRIO</div>
+        <input type="text" id="reg-name" class="field-input" placeholder="HeroNutri42" autocomplete="username" />
+        <div class="error-msg" id="reg-name-err">Nome muito curto (mín. 3 chars)</div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="licon">📧</span> E-MAIL</div>
+        <input type="email" id="reg-email" class="field-input" placeholder="seu@email.com" autocomplete="email" />
+        <div class="error-msg" id="reg-email-err">E-mail inválido</div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="licon">🔑</span>SENHA</div>
+        <div class="pass-wrap">
+          <input type="password" id="reg-pass" class="field-input" placeholder="Crie uma senha forte" autocomplete="new-password" oninput="checkStrength(this.value)" />
+          <button class="pass-toggle" onclick="togglePass('reg-pass', this)" aria-label="Mostrar senha">👁</button>
+        </div>
+        <div class="strength-bar">
+          <div class="strength-track">
+            <div class="strength-seg" id="seg1"></div>
+            <div class="strength-seg" id="seg2"></div>
+            <div class="strength-seg" id="seg3"></div>
+            <div class="strength-seg" id="seg4"></div>
+          </div>
+
+          <div class="strength-label" id="strength-label">Digite uma senha</div>
+        </div>
+        <div class="error-msg" id="reg-pass-err">Senha muito fraca</div>
+      </div>
+      <div class="field">
+        <div class="field-label"><span class="licon">🛡</span> CONFIRMAR SENHA</div>
+        <div class="pass-wrap">
+          <input type="password" id="reg-pass2" class="field-input" placeholder="Repita a senha" autocomplete="new-password" />
+          <button class="pass-toggle" onclick="togglePass('reg-pass2', this)" aria-label="Mostrar senha">👁</button>
+        </div>
+        <div class="error-msg" id="reg-pass2-err">Senhas não conferem</div>
+      </div>
+      <button class="btn-submit btn-register" onclick="handleRegister()"><span>✦ CRIAR PERSONAGEM</span></button>
+      <div class="bottom-text">JÁ TEM CONTA? <a href="#" onclick="switchTab('login');return false">ENTRE AQUI</a></div>
+    </div>
+  </div>
+
+  <div class="login-footer">
+    <a href="index.html">← VOLTAR AO INÍCIO</a> &nbsp;·&nbsp;
+    <a href="#">TERMOS</a> &nbsp;·&nbsp;
+    <a href="#">PRIVACIDADE</a>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon" id="successIcon">🏆</div>
+  <div class="success-title" id="successTitle">LOGIN EFETUADO!</div>
+  <div class="success-sub" id="successSub">Bem-vindo de volta, Atleta!</div>
+  <div class="success-xp" id="successXp">+50 XP</div>
+  <div class="success-xp-label">BÔNUS DE ACESSO DIÁRIO</div>
+</div>
+
+
+<script src="/assets/api.js"></script>
+<script>
+/* ============ TAB SWITCH ============ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+  clearErrors();
+}
+
+/* ============ TOGGLE PASSWORD ============ */
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+/* ============ STRENGTH CHECK ============ */
+function checkStrength(val) {
+  const segs = ['seg1','seg2','seg3','seg4'].map(id => document.getElementById(id));
+  const label = document.getElementById('strength-label');
+  let score = 0;
+  if (val.length >= 8) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  segs.forEach((s, i) => {
+    s.className = 'strength-seg';
+    if (i < score) s.classList.add(score <= 1 ? 'lit-weak' : score <= 2 ? 'lit-ok' : 'lit-strong');
+  });
+  const labels = ['Digite uma senha', '🔴 FRACA', '🟡 MÉDIA', '🟢 BOA', '🏆 FORTE'];
+  label.textContent = labels[score];
+}
+
+/* ============ CLEAR ERRORS ============ */
+function clearErrors() {
+  document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('visible'));
+  document.querySelectorAll('.field-input').forEach(i => i.classList.remove('error'));
+}
+function showError(inputId, msgId, msg) {
+  document.getElementById(inputId).classList.add('error');
+  const el = document.getElementById(msgId);
+  if (msg) el.textContent = msg;
+  el.classList.add('visible');
+}
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+/* ============ LOGIN ============ */
+async function handleLogin() {
+  clearErrors();
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  let ok = true;
+  if (!isValidEmail(email)) { showError('login-email','login-email-err','E-mail inválido'); ok = false; }
+  if (pass.length < 1)      { showError('login-pass','login-pass-err','Informe a senha'); ok = false; }
+  if (!ok) return;
+
+  const btn = document.querySelector('#panel-login .btn-submit');
+  btn.disabled = true;
+  btn.querySelector('span').textContent = 'CARREGANDO...';
+
+  try {
+    const data = await NQ.login(email, pass);
+    const bonus = data.dailyBonus ? `+${data.dailyBonus} XP` : '+0 XP';
+    showSuccess('🏆', 'LOGIN EFETUADO!', `Bem-vindo de volta, ${data.user.username}!`, bonus, 'BÔNUS DE ACESSO DIÁRIO');
+    setTimeout(() => { window.location.href = '/'; }, 1800);
+  } catch (err) {
+    showError('login-pass', 'login-pass-err', err.message);
+    btn.disabled = false;
+    btn.querySelector('span').textContent = '▶ INICIAR SESSÃO';
+  }
+}
+
+/* ============ REGISTER ============ */
+async function handleRegister() {
+  clearErrors();
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  let ok = true;
+  if (name.length < 3)      { showError('reg-name','reg-name-err','Nome muito curto (mín. 3 chars)'); ok = false; }
+  if (!isValidEmail(email)) { showError('reg-email','reg-email-err','E-mail inválido'); ok = false; }
+  if (pass.length < 6)      { showError('reg-pass','reg-pass-err','Senha muito fraca'); ok = false; }
+  if (pass !== pass2)       { showError('reg-pass2','reg-pass2-err','Senhas não conferem'); ok = false; }
+  if (!ok) return;
+
+  const btn = document.querySelector('#panel-register .btn-submit');
+  btn.disabled = true;
+  btn.querySelector('span').textContent = 'CRIANDO...';
+
+  try {
+    const data = await NQ.register(name, email, pass);
+    showSuccess('⭐', 'PERSONAGEM CRIADO!', `Bem-vindo, ${data.user.username}!`, '+500 XP', 'BÔNUS DE NOVO JOGADOR');
+    setTimeout(() => { window.location.href = '/'; }, 1800);
+  } catch (err) {
+    showError('reg-email', 'reg-email-err', err.message);
+    btn.disabled = false;
+    btn.querySelector('span').textContent = '✦ CRIAR PERSONAGEM';
+  }
+}
+
+/* ============ SUCCESS OVERLAY ============ */
+function showSuccess(icon, title, sub, xp, xpLabel) {
+  document.getElementById('successIcon').textContent = icon;
+  document.getElementById('successTitle').textContent = title;
+  document.getElementById('successSub').textContent = sub;
+  document.getElementById('successXp').textContent = xp;
+  document.querySelector('.success-xp-label').textContent = xpLabel;
+  document.getElementById('successOverlay').classList.add('show');
+  spawnParticles();
+}
+document.getElementById('successOverlay').addEventListener('click', function() {
+  this.classList.remove('show');
+});
+
+/* ============ PARTICLES ============ */
+function spawnParticle(text, x, y) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.textContent = text;
+  p.style.color = '#ffa502';
+  p.style.left = (x || Math.random()*80+10) + 'vw';
+  p.style.top  = (y || Math.random()*60+20) + 'vh';
+  document.body.appendChild(p);
+  setTimeout(() => p.remove(), 1300);
+}
+function spawnParticles() {
+  ['⭐','✦','+XP','🏆','💪'].forEach((t,i) => setTimeout(() => spawnParticle(t), i * 150));
+}
+
+/* ============ ENTER KEY ============ */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const loginActive = document.getElementById('panel-login').classList.contains('active');
+    if (loginActive) handleLogin(); else handleRegister();
+  }
+});
+
+/* ============ SE JÁ LOGADO, REDIRECIONAR ============ */
+if (NQ.isLoggedIn()) window.location.href = '/';
+</script>
+</body>
+</html>
