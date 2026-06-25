@@ -3,7 +3,7 @@
    Centraliza todas as chamadas ao backend (http://localhost:3001)
    ============================================================ */
 
-const API_BASE = 'https://nutriquest-completo.onrender.com/api';
+const API_BASE = 'https://nutriquest-backend.onrender.com/api';
 const TOKEN_KEY = 'nq_token';
 const USER_KEY  = 'nq_user';
 
